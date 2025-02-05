@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Image, View, Text, ScrollView, StyleSheet, TextInput } from 'react-native';
-import medicamentosJSON from '@/medicamentos.json';
+import medicamentosJSON from '../../medicamentos.json';
 
 // Define la interfaz según la estructura del JSON
 type MedicamentoLocal = {
