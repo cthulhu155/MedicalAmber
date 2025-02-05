@@ -1,21 +1,28 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import * as SplashScreen from 'expo-splash-screen'
+import { NavigationIndependentTree } from '@react-navigation/native';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+import _layout from '../app/(tabs)/_layout';        
+import Login from '../app/screen/login';
+import registro from './screen/registro';
+
+// Evitar que se oculte la pantalla de splash automáticamente
 SplashScreen.preventAutoHideAsync();
 
+const Stack = createNativeStackNavigator();
+
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  // Cargar la fuente personalizada
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+
+  // Estado de autenticación (ejemplo)
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
   useEffect(() => {
     if (loaded) {
@@ -27,13 +34,26 @@ export default function RootLayout() {
     return null;
   }
 
+  // Wrapper para el componente Login que pasa la función setIsAuthenticated
+  function LoginWrapper(props: any) {
+    return <Login {...props} setIsAuthenticated={setIsAuthenticated} />;
+  }
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+<NavigationIndependentTree>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {isAuthenticated ? (
+          <Stack.Screen name="_layout" component={_layout} />
+        ) : (
+          <>
+            <Stack.Screen name="Login" component={LoginWrapper} />
+            <Stack.Screen name="Register" component={registro} />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+</NavigationIndependentTree>
+
   );
 }
