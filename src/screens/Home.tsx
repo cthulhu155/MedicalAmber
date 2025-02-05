@@ -13,7 +13,7 @@ type MedicamentoLocal = {
   indicacionTerapeuticas: string;
 };
 
-export default function home() {
+export default function Home() {
   const [medicamentos, setMedicamentos] = useState<MedicamentoLocal[]>([]);
   const [busqueda, setBusqueda] = useState<string>('');
   const [filtrados, setFiltrados] = useState<MedicamentoLocal[]>([]);
