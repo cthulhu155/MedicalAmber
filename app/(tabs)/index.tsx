@@ -45,7 +45,7 @@ export default function App() {
 
   return (
     <ScrollView style={styles.container}>
-      <Image source={require('C:/Users/cthul/OneDrive/Desktop/Proyectos/MedicalAmber/assets/images/MedicalAmber.png')} style={{width: 200, height: 200}} ></Image>
+      <Image source={require('../../assets/images/MedicalAmber.png')} style={{width: 200, height: 200}} ></Image>
       <Text style={styles.header}>MedicalAmber</Text>
       <TextInput
         style={styles.input}
