@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import {Image, View, Text, ScrollView, StyleSheet, TextInput } from 'react-native';
-
-// Importamos el JSON local. Asegúrate de la ruta correcta.
-// Puedes colocar el archivo JSON en la carpeta /assets o /data de tu proyecto
-// y ajustar la ruta aquí, por ejemplo "../assets/medicamentos.json"
+import { Image, View, Text, ScrollView, StyleSheet, TextInput } from 'react-native';
 import medicamentosJSON from '@/medicamentos.json';
-
 
 // Define la interfaz según la estructura del JSON
 type MedicamentoLocal = {
@@ -19,33 +14,40 @@ type MedicamentoLocal = {
 };
 
 export default function App() {
-  // Almacena todos los medicamentos cargados del JSON
   const [medicamentos, setMedicamentos] = useState<MedicamentoLocal[]>([]);
-  // Maneja el término de búsqueda
   const [busqueda, setBusqueda] = useState<string>('');
-  // Almacena los medicamentos filtrados
   const [filtrados, setFiltrados] = useState<MedicamentoLocal[]>([]);
 
-  // Carga el JSON al montar el componente
   useEffect(() => {
-    // Aquí asignamos todos los medicamentos al state
     setMedicamentos(medicamentosJSON);
   }, []);
 
-  // Filtra cada vez que cambie la búsqueda o que se carguen los medicamentos
   useEffect(() => {
-    // Convertimos la búsqueda a minúsculas para buscar sin distinción de mayúsculas
     const termino = busqueda.toLowerCase();
-    // Filtramos la lista por coincidencia en el campo "farmaco"
-    const resultados = medicamentos.filter(med =>
+
+    let resultados = medicamentos.filter(med =>
       med.farmaco.toLowerCase().includes(termino)
     );
+
+    resultados.sort((a, b) => {
+      const aExacto = a.farmaco.toLowerCase() === termino ? 0 : 1;
+      const bExacto = b.farmaco.toLowerCase() === termino ? 0 : 1;
+      if (aExacto === bExacto) {
+        return a.farmaco.localeCompare(b.farmaco);
+      }
+      return aExacto - bExacto;
+    });
+
     setFiltrados(resultados);
   }, [busqueda, medicamentos]);
 
   return (
     <ScrollView style={styles.container}>
-      <Image source={require('../../assets/images/MedicalAmber.png')} style={{width: 200, height: 200}} ></Image>
+      <Image
+        source={require('../../assets/images/MedicalAmber.png')}
+        style={styles.logoImage}
+      />
+
       <Text style={styles.header}>MedicalAmber</Text>
       <TextInput
         style={styles.input}
@@ -119,5 +121,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#888',
     marginTop: 20,
+  },
+  logoImage: {
+    width: 200,
+    height: 200,
+    alignSelf: 'center',
+    marginBottom: 20,
   },
 });
