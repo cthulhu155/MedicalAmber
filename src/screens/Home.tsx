@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Image, View, Text, ScrollView, StyleSheet, TextInput } from 'react-native';
 import medicamentosJSON from '../../medicamentos.json';
-import BottomNavigationBar from '../components/BottomNavigationBar';
-import { NavigationContainer } from '@react-navigation/native';
 
 // Define la interfaz según la estructura del JSON
 type MedicamentoLocal = {
@@ -29,46 +27,45 @@ export default function Home() {
 
     let resultados = medicamentos.filter(med =>
       med.farmaco.toLowerCase().includes(termino)
-  );
+    );
 
-  resultados.sort((a, b) => {
-    const aExacto = a.farmaco.toLowerCase() === termino ? 0 : 1;
-     const bExacto = b.farmaco.toLowerCase() === termino ? 0 : 1;
-     if (aExacto === bExacto) {
-       return a.farmaco.localeCompare(b.farmaco);
-     }
+    resultados.sort((a, b) => {
+      const aExacto = a.farmaco.toLowerCase() === termino ? 0 : 1;
+      const bExacto = b.farmaco.toLowerCase() === termino ? 0 : 1;
+      if (aExacto === bExacto) {
+        return a.farmaco.localeCompare(b.farmaco);
+      }
       return aExacto - bExacto;
     });
 
-  setFiltrados(resultados);
+    setFiltrados(resultados);
   }, [busqueda, medicamentos]);
 
   return (
-      <ScrollView style={styles.container}>
-        <Image source={require('../../assets/images/MedicalAmber.png')} style={styles.logoImage} />
-        <Text style={styles.header}>MedicalAmber</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Buscar medicamento..."
-          value={busqueda}
-          onChangeText={setBusqueda}
-        />
-        {filtrados.length > 0 ? (
-          filtrados.map((med, index) => (
-            <View key={index} style={styles.card}>
-              <Text style={styles.title}>{med.farmaco}</Text>
-              <Text style={styles.description}>Forma: {med.formaFarmaceutica}</Text>
-              <Text style={styles.description}>Concentración: {med.concentracion}</Text>
-              <Text style={styles.description}>Registro: {med.registroSanitario}</Text>
-              <Text style={styles.description}>Titular: {med.titular}</Text>
-              <Text style={styles.description}>Indicacion: {med.indicacionTerapeuticas}</Text>
-            </View>
-          ))
-        ) : (
-          <Text style={styles.noResults}>No se encontraron medicamentos.</Text>
-        )}
-    <BottomNavigationBar/>
-      </ScrollView>
+    <ScrollView style={styles.container}>
+      <Image source={require('../../assets/images/MedicalAmber.png')} style={styles.logoImage} />
+      <Text style={styles.header}>MedicalAmber</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Buscar medicamento..."
+        value={busqueda}
+        onChangeText={setBusqueda}
+      />
+      {filtrados.length > 0 ? (
+        filtrados.map((med, index) => (
+          <View key={index} style={styles.card}>
+            <Text style={styles.title}>{med.farmaco}</Text>
+            <Text style={styles.description}>Forma: {med.formaFarmaceutica}</Text>
+            <Text style={styles.description}>Concentración: {med.concentracion}</Text>
+            <Text style={styles.description}>Registro: {med.registroSanitario}</Text>
+            <Text style={styles.description}>Titular: {med.titular}</Text>
+            <Text style={styles.description}>Indicacion: {med.indicacionTerapeuticas}</Text>
+          </View>
+        ))
+      ) : (
+        <Text style={styles.noResults}>No se encontraron medicamentos.</Text>
+      )}
+    </ScrollView>
   );
 }
 

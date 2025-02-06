@@ -1,15 +1,13 @@
-import React, { useEffect } from 'react';
+// app.ts
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen'
-import { NavigationIndependentTree } from '@react-navigation/native';
+import * as SplashScreen from 'expo-splash-screen';
 
 import Login from '../src/screens/(auth)/Login';
-import Home from '../src/screens/Home';
-import Register from './screens/(auth)/Register';
+import Register from '../src/screens/(auth)/Register';
 import BottomNavigationBar from './components/BottomNavigationBar';
-
 
 SplashScreen.preventAutoHideAsync();
 
@@ -20,7 +18,7 @@ export default function App() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     if (loaded) {
@@ -28,20 +26,22 @@ export default function App() {
     }
   }, [loaded]);
 
-  if (!loaded) {
-    return null;
-  }
-
-  function LoginWrapper(props: any) {
-    return <Login {...props} setIsAuthenticated={setIsAuthenticated} />;
-  }
+  if (!loaded) return null;
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="Home" component={BottomNavigationBar} />
+      <Stack.Navigator initialRouteName={isAuthenticated ? "HomeTabs" : "Login"} screenOptions={{ headerShown: false }}>
+        {!isAuthenticated ? (
+          <>
+            <Stack.Screen name="Login">
+              {props => <Login {...props} setIsAuthenticated={setIsAuthenticated} />}
+            </Stack.Screen>
+
+            <Stack.Screen name="Register" component={Register} />
+          </>
+        ) : (
+          <Stack.Screen name="HomeTabs" component={BottomNavigationBar} />
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
