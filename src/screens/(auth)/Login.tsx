@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Image, Text, TouchableOpacity, StyleSheet, Alert, TextInput } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
+import { sharedStyles } from '../../utils/StyleSheetAuth'; 
 
 type LoginProps = {
   navigation: NavigationProp<any>; 
@@ -21,14 +22,14 @@ export default function Login({ navigation, setIsAuthenticated }: LoginProps) {
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={require('../../../assets/images/MedicalAmber.png')} style={styles.logoImage} />
+   <View style={sharedStyles.container}>
+      <Image source={require('../../../assets/images/MedicalAmber.png')} style={sharedStyles.logoImage} />
 
-      <Text style={styles.title}>Iniciar sesión</Text>
-      <Text style={styles.subtitle}>Accede a tu cuenta de forma segura.</Text>
+      <Text style={sharedStyles.title}>Iniciar sesión</Text>
+      <Text style={sharedStyles.subtitle}>Accede a tu cuenta de forma segura.</Text>
 
       <TextInput
-        style={styles.input}
+        style={sharedStyles.input}
         placeholder="Correo electrónico"
         placeholderTextColor="#ccc"
         value={email}
@@ -38,7 +39,7 @@ export default function Login({ navigation, setIsAuthenticated }: LoginProps) {
       />
 
       <TextInput
-        style={styles.input}
+        style={sharedStyles.input}
         placeholder="Contraseña"
         placeholderTextColor="#ccc"
         value={password}
@@ -47,77 +48,17 @@ export default function Login({ navigation, setIsAuthenticated }: LoginProps) {
         autoCapitalize="none"
       />
 
-      <TouchableOpacity style={styles.emailButton} onPress={handleLogin}>
-        <Text style={styles.emailButtonText}>Iniciar sesión</Text>
+      <TouchableOpacity style={sharedStyles.button} onPress={handleLogin}>
+        <Text style={sharedStyles.buttonText}>Iniciar sesión</Text>
       </TouchableOpacity>
 
-      <Text style={styles.link} onPress={() => navigation.navigate('Register')}>
+      <Text style={sharedStyles.link} onPress={() => navigation.navigate('Register')}>
         ¿Nuevo usuario? Regístrate
       </Text>
 
-      <Text style={styles.help} onPress={() => Alert.alert('Ayuda', 'Para más información, contacta soporte.')}>
+      <Text style={sharedStyles.help} onPress={() => Alert.alert('Ayuda', 'Para más información, contacta soporte.')}>
         ¿Necesitas ayuda?
       </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#1E2632',
-    padding: 20,
-  },
-  title: {
-    fontSize: 22,
-    color: '#fff',
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#ccc',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  input: {
-    width: '100%',
-    backgroundColor: '#333',
-    color: '#fff',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 15,
-  },
-  emailButton: {
-    backgroundColor: '#FF9AA2',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    marginBottom: 15,
-    width: '100%',
-    alignItems: 'center',
-  },
-  emailButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  link: {
-    color: '#FF9AA2',
-    marginTop: 10,
-  },
-  help: {
-    color: '#ccc',
-    marginTop: 20,
-  },
-  logoImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    alignSelf: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-});
