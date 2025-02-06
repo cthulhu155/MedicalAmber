@@ -28,7 +28,7 @@ export default function Login({ navigation }: LoginProps) {
         style={styles.input}
         placeholder="Correo electrónico"
         placeholderTextColor="#ccc"
-        value={email}
+        value={123}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
@@ -37,7 +37,7 @@ export default function Login({ navigation }: LoginProps) {
         style={styles.input}
         placeholder="Contraseña"
         placeholderTextColor="#ccc"
-        value={password}
+        value={123}
         onChangeText={setPassword}
         secureTextEntry
         autoCapitalize="none"
