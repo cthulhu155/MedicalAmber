@@ -4,22 +4,21 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen'
 import { NavigationIndependentTree } from '@react-navigation/native';
-import Login from './screens/Login';
-import Home from './screens/Home';
-import Register from './screens/Register';
 
-// Evitar que se oculte la pantalla de splash automáticamente
+import Login from '../src/screens/(auth)/Login';
+import Home from '../src/screens/Home';
+import Register from './screens/(auth)/Register';
+
+
 SplashScreen.preventAutoHideAsync();
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  // Cargar la fuente personalizada
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
-  // Estado de autenticación (ejemplo)
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
   useEffect(() => {
@@ -32,27 +31,17 @@ export default function App() {
     return null;
   }
 
-  // Wrapper para el componente Login que pasa la función setIsAuthenticated
   function LoginWrapper(props: any) {
     return <Login {...props} setIsAuthenticated={setIsAuthenticated} />;
   }
 
   return (
-<NavigationIndependentTree>
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {isAuthenticated ? (
-            <Stack.Screen name="Home" component={Home} />
-
-        ) : (
-          <>
-            <Stack.Screen name="Login" component={LoginWrapper} />
-            <Stack.Screen name="Register" component={Register} />
-          </>
-        )}
+  <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen name="Home" component={Home} />
       </Stack.Navigator>
     </NavigationContainer>
-</NavigationIndependentTree>
-
   );
 }
