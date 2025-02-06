@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { View,Image, Text, TouchableOpacity, StyleSheet, Alert, TextInput } from 'react-native';
+import { View, Image, Text, TouchableOpacity, StyleSheet, Alert, TextInput } from 'react-native';
+import { NavigationProp } from '@react-navigation/native';
 
-export default function Login({ navigation }) {
+type LoginProps = {
+  navigation: NavigationProp<any>;
+};
 
+export default function Login({ navigation }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
     if (email && password) {
       Alert.alert('Inicio de sesión exitoso', 'Bienvenido de nuevo!');
-      navigation.navigate('Home');
+      navigation.navigate('Home'); // Navigate to the Home screen
     } else {
       Alert.alert('Error', 'Por favor, introduce tu correo y contraseña.');
     }
@@ -17,12 +21,9 @@ export default function Login({ navigation }) {
 
   return (
     <View style={styles.container}>
-
-      <Image source={require('../../assets/images/MedicalAmber.png')} style={styles.logoImage}/>
-
+      <Image source={require('../../../assets/images/MedicalAmber.png')} style={styles.logoImage} />
       <Text style={styles.title}>Iniciar sesión</Text>
       <Text style={styles.subtitle}>Accede a tu cuenta de forma segura.</Text>
-
       <TextInput
         style={styles.input}
         placeholder="Correo electrónico"
@@ -32,7 +33,6 @@ export default function Login({ navigation }) {
         keyboardType="email-address"
         autoCapitalize="none"
       />
-
       <TextInput
         style={styles.input}
         placeholder="Contraseña"
@@ -42,17 +42,15 @@ export default function Login({ navigation }) {
         secureTextEntry
         autoCapitalize="none"
       />
-
       <TouchableOpacity style={styles.emailButton} onPress={handleLogin}>
         <Text style={styles.emailButtonText}>Iniciar sesión</Text>
       </TouchableOpacity>
-
       <Text style={styles.link} onPress={() => navigation.navigate('Register')}>
         ¿Nuevo usuario? Regístrate
       </Text>
-
-      <Text style={styles.help} onPress={() => Alert.alert('Ayuda', 'Para más información, contacta soporte.')}>¿Necesitas ayuda?</Text>
-
+      <Text style={styles.help} onPress={() => Alert.alert('Ayuda', 'Para más información, contacta soporte.')}>
+        ¿Necesitas ayuda?
+      </Text>
     </View>
   );
 }
@@ -110,10 +108,9 @@ const styles = StyleSheet.create({
   logoImage: {
     width: 200,
     height: 200,
-    borderRadius: 100, // Esto hace que la imagen sea circular
+    borderRadius: 100,
     alignSelf: 'center',
-    marginTop: 10, // Ajusta este valor según sea necesario para posicionarla arriba
+    marginTop: 10,
     marginBottom: 20,
   },
-
 });
