@@ -1,73 +1,61 @@
 import React, { useEffect, useState } from 'react';
-import { Image, View, Text, ScrollView, TextInput } from 'react-native';
+import { Image, View, Text, TextInput, FlatList } from 'react-native';
 import medicamentosJSON from '../../medicamentos.json';
 import { StylesScreens } from '../utils/StyleSheet';
-
-
-// Define la interfaz según la estructura del JSON
-type MedicamentoLocal = {
-  numero: string;
-  farmaco: string;
-  formaFarmaceutica: string;
-  concentracion: string;
-  registroSanitario: string;
-  titular: string;
-  indicacionTerapeuticas: string;
-};
+import MedicamentoCard from '../components/MedicamentoCard';
 
 export default function Home() {
-  const [medicamentos, setMedicamentos] = useState<MedicamentoLocal[]>([]);
-  const [busqueda, setBusqueda] = useState<string>('');
-  const [filtrados, setFiltrados] = useState<MedicamentoLocal[]>([]);
+  const [state, setState] = useState({
+    medicamentos: [] as MedicamentoLocal[],
+    busqueda: '',
+    filtrados: [] as MedicamentoLocal[],
+  });
 
   useEffect(() => {
-    setMedicamentos(medicamentosJSON);
+    setState(prev => ({
+      ...prev,
+      medicamentos: medicamentosJSON,
+      filtrados: filtrarMedicamentos(prev.busqueda, medicamentosJSON),
+    }));
   }, []);
 
   useEffect(() => {
-    const termino = busqueda.toLowerCase();
+    setState(prev => ({
+      ...prev,
+      filtrados: filtrarMedicamentos(prev.busqueda, prev.medicamentos),
+    }));
+  }, [state.busqueda]);
 
-    let resultados = medicamentos.filter(med =>
-      med.farmaco.toLowerCase().includes(termino)
-    );
+  const filtrarMedicamentos = (termino: string, lista: MedicamentoLocal[]) => {
+    const terminoLower = termino.toLowerCase();
+    
+    let resultados = lista.filter(med => med.farmaco.toLowerCase().includes(terminoLower));
 
     resultados.sort((a, b) => {
-      const aExacto = a.farmaco.toLowerCase() === termino ? 0 : 1;
-      const bExacto = b.farmaco.toLowerCase() === termino ? 0 : 1;
-      if (aExacto === bExacto) {
-        return a.farmaco.localeCompare(b.farmaco);
-      }
-      return aExacto - bExacto;
+      const aExacto = a.farmaco.toLowerCase() === terminoLower ? 0 : 1;
+      const bExacto = b.farmaco.toLowerCase() === terminoLower ? 0 : 1;
+      return aExacto === bExacto ? a.farmaco.localeCompare(b.farmaco) : aExacto - bExacto;
     });
 
-    setFiltrados(resultados);
-  }, [busqueda, medicamentos]);
+    return resultados;
+  };
 
   return (
-    <ScrollView style={StylesScreens.container}>
+    <View style={StylesScreens.container}>
       <Image source={require('../../assets/images/MedicalAmber.png')} style={StylesScreens.logoImage} />
       <Text style={StylesScreens.header}>MedicalAmber</Text>
       <TextInput
         style={StylesScreens.input}
         placeholder="Buscar medicamento..."
-        value={busqueda}
-        onChangeText={setBusqueda}
+        value={state.busqueda}
+        onChangeText={text => setState(prev => ({ ...prev, busqueda: text }))}
       />
-      {filtrados.length > 0 ? (
-        filtrados.map((med, index) => (
-          <View key={index} style={StylesScreens.card}>
-            <Text style={StylesScreens.title}>{med.farmaco}</Text>
-            <Text style={StylesScreens.description}>Forma: {med.formaFarmaceutica}</Text>
-            <Text style={StylesScreens.description}>Concentración: {med.concentracion}</Text>
-            <Text style={StylesScreens.description}>Registro: {med.registroSanitario}</Text>
-            <Text style={StylesScreens.description}>Titular: {med.titular}</Text>
-            <Text style={StylesScreens.description}>Indicacion: {med.indicacionTerapeuticas}</Text>
-          </View>
-        ))
-      ) : (
-        <Text style={StylesScreens.noResults}>No se encontraron medicamentos.</Text>
-      )}
-    </ScrollView>
+      <FlatList
+        data={state.filtrados}
+        keyExtractor={(item) => item.numero}
+        renderItem={({ item }) => <MedicamentoCard medicamento={item} />}
+        ListEmptyComponent={<Text style={StylesScreens.noResults}>No se encontraron medicamentos.</Text>}
+      />
+    </View>
   );
 }
-
