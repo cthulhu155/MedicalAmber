@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Image, View, Text, ScrollView, StyleSheet, TextInput } from 'react-native';
 import medicamentosJSON from '../../medicamentos.json';
+import BottomNavigationBar from '../components/BottomNavigationBar';
 
 // Define la interfaz según la estructura del JSON
 type MedicamentoLocal = {
@@ -72,6 +73,7 @@ export default function Home() {
       ) : (
         <Text style={styles.noResults}>No se encontraron medicamentos.</Text>
       )}
+  <BottomNavigationBar></BottomNavigationBar>
     </ScrollView>
   );
 }
