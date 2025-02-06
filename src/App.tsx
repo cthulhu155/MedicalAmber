@@ -8,6 +8,7 @@ import { NavigationIndependentTree } from '@react-navigation/native';
 import Login from '../src/screens/(auth)/Login';
 import Home from '../src/screens/Home';
 import Register from './screens/(auth)/Register';
+import BottomNavigationBar from './components/BottomNavigationBar';
 
 
 SplashScreen.preventAutoHideAsync();
@@ -36,11 +37,11 @@ export default function App() {
   }
 
   return (
-  <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Home" component={BottomNavigationBar} />
       </Stack.Navigator>
     </NavigationContainer>
   );
