@@ -1,54 +1,42 @@
+import React, { useState } from "react";
 import { StyleSheet, Switch, Text, View } from "react-native";
-import { useState } from "react";
 import Body, { ExtendedBodyPart } from "react-native-body-highlighter";
-import React from "react";
 
 export default function BodyHuman() {
-  const [selectedBodyPart, setSelectedBodyPart] = useState<ExtendedBodyPart>({
-    slug: "biceps",
-    intensity: 2,
-    side: "right",
-  });
+  const [selectedParts, setSelectedParts] = useState<ExtendedBodyPart[]>([]);
   const [side, setSide] = useState<"front" | "back">("front");
-  const [gender, setGender] = useState<"male" | "female">("male");
 
-  const sideSwitch = () =>
-    setSide((previousState: string) => (previousState === "front" ? "back" : "front"));
-
-  const toggleGenderSwitch = () => {
-    setGender((previousState: string) =>
-      previousState === "male" ? "female" : "male"
-    );
+  // Función para traducir "front" | "back" a un formato compatible
+  const mapSide = (clickedSide: "front" | "back"): "left" | "right" | undefined => {
+    return clickedSide === "front" ? undefined : undefined; // O deja undefined para que funcione bien
   };
+
+  const handleBodyPartPress = (part: ExtendedBodyPart) => {
+    setSelectedParts((prevParts) => {
+      const exists = prevParts.some((p) => p.slug === part.slug);
+
+      return exists
+        ? prevParts.filter((p) => p.slug !== part.slug)
+        : [...prevParts, { ...part, intensity: 1, side: mapSide(side) }];
+    });
+  };
+
+  const toggleSide = () => setSide((prev) => (prev === "front" ? "back" : "front"));
 
   return (
     <View style={styles.container}>
       <Body
-        data={[
-          { slug: "chest", intensity: 1, side: "left" },
-          { slug: "biceps", intensity: 1 },
-          selectedBodyPart,
-        ]}
-        onBodyPartPress={(e, side) =>
-          setSelectedBodyPart({ slug: e.slug, intensity: 2, side })
-        }
-        gender={gender}
+        data={selectedParts}
+        onBodyPartPress={handleBodyPartPress}
         side={side}
+        gender="male"  // Cambia a "female" si lo necesitas
         scale={1.7}
         border="#dfdfdf"
+        colors={["#0000FF"]}
       />
       <View style={styles.switchContainer}>
-        <View style={styles.switch}>
-          <Text>Side ({side})</Text>
-          <Switch onValueChange={sideSwitch} value={side === "front"} />
-        </View>
-        <View style={styles.switch}>
-          <Text>Gender ({gender})</Text>
-          <Switch
-            onValueChange={toggleGenderSwitch}
-            value={gender === "male"}
-          />
-        </View>
+        <Text>Side ({side})</Text>
+        <Switch onValueChange={toggleSide} value={side === "front"} />
       </View>
     </View>
   );
@@ -63,11 +51,7 @@ const styles = StyleSheet.create({
   },
   switchContainer: {
     flexDirection: "row",
-    gap: 30,
-  },
-  switch: {
-    flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    marginTop: 20,
   },
 });
