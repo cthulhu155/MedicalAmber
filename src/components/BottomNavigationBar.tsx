@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Chat from '../screens/Chat';
 import Home from '../screens/Home';
 import Medicamentos from '../screens/Medicamentos';
+import BodyHuman from '../screens/BodyHuman';
 
 const Tab = createBottomTabNavigator();
 
@@ -40,6 +41,7 @@ const BottomNavigationBar = () => {
     >
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Medicamentos" component={Medicamentos} />
+      <Tab.Screen name="Humano Prueba" component={BodyHuman} />
       <Tab.Screen name="Chat" component={Chat} />
     </Tab.Navigator>
   );
