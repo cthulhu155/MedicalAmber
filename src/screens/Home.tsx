@@ -1,61 +1,73 @@
 import React, { useEffect, useState } from 'react';
-import { Image, View, Text, TextInput, FlatList } from 'react-native';
-import medicamentosJSON from '../../medicamentos.json';
-import { StylesScreens } from '../utils/StyleSheet';
-import MedicamentoCard from '../components/MedicamentoCard';
+import { Image, View, Text, TextInput, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function Home() {
-  const [state, setState] = useState({
-    medicamentos: [] as MedicamentoLocal[],
-    busqueda: '',
-    filtrados: [] as MedicamentoLocal[],
-  });
 
-  useEffect(() => {
-    setState(prev => ({
-      ...prev,
-      medicamentos: medicamentosJSON,
-      filtrados: filtrarMedicamentos(prev.busqueda, medicamentosJSON),
-    }));
-  }, []);
+  const [reminders, setReminders] = useState<Reminder[]>([
+    { id: '1', title: 'Take Medicine', time: '09:00 AM' },
+    { id: '2', title: 'Doctor Appointment', time: '02:30 PM' },
+  ]);
 
-  useEffect(() => {
-    setState(prev => ({
-      ...prev,
-      filtrados: filtrarMedicamentos(prev.busqueda, prev.medicamentos),
-    }));
-  }, [state.busqueda]);
-
-  const filtrarMedicamentos = (termino: string, lista: MedicamentoLocal[]) => {
-    const terminoLower = termino.toLowerCase();
-    
-    let resultados = lista.filter(med => med.farmaco.toLowerCase().includes(terminoLower));
-
-    resultados.sort((a, b) => {
-      const aExacto = a.farmaco.toLowerCase() === terminoLower ? 0 : 1;
-      const bExacto = b.farmaco.toLowerCase() === terminoLower ? 0 : 1;
-      return aExacto === bExacto ? a.farmaco.localeCompare(b.farmaco) : aExacto - bExacto;
-    });
-
-    return resultados;
-  };
+const renderReminderItem = ({ item }: { item: Reminder }) => (
+  <TouchableOpacity style={styles.reminderItem}>
+    <View>
+      <Text style={styles.reminderTitle}>{item.title}</Text>
+      <Text style={styles.reminderTime}>{item.time}</Text>
+    </View>
+  </TouchableOpacity>
+);
 
   return (
-    <View style={StylesScreens.container}>
-      <Image source={require('../../assets/images/MedicalAmber.png')} style={StylesScreens.logoImage} />
-      <Text style={StylesScreens.header}>MedicalAmber</Text>
-      <TextInput
-        style={StylesScreens.input}
-        placeholder="Buscar medicamento..."
-        value={state.busqueda}
-        onChangeText={text => setState(prev => ({ ...prev, busqueda: text }))}
-      />
-      <FlatList
-        data={state.filtrados}
-        keyExtractor={(item) => item.numero}
-        renderItem={({ item }) => <MedicamentoCard medicamento={item} />}
-        ListEmptyComponent={<Text style={StylesScreens.noResults}>No se encontraron medicamentos.</Text>}
+   <View style={styles.screenContainer}>
+      <Text style={styles.screenTitle}>Medical Reminders</Text>
+      <FlatList<Reminder>
+        data={reminders}
+        renderItem={renderReminderItem}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );
 }
+
+
+const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    backgroundColor: "#F5F5F5",
+    padding: 20,
+  },
+  screenTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  reminderList: {
+    flex: 1,
+  },
+  reminderItem: {
+    backgroundColor: 'white',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  reminderTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 5,
+  },
+  reminderTime: {
+    fontSize: 14,
+    color: '#666',
+  },
+});

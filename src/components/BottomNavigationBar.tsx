@@ -1,10 +1,11 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Chat from '../screens/Chat';
+
 import Home from '../screens/Home';
 import Medicamentos from '../screens/Medicamentos';
 import BodyHuman from '../screens/BodyHuman';
+import Asistente from '../screens/Asistente';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,7 +16,8 @@ const BottomNavigationBar = () => {
         const icons: Record<string, string> = {
           Home: 'home',
           Medicamentos: 'pill',
-          Chat: 'chat',
+          Cuerpo: 'human',
+          Asistente: 'robot',
         };
         return {
           tabBarIcon: ({ color, size }) => (
@@ -41,8 +43,8 @@ const BottomNavigationBar = () => {
     >
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Medicamentos" component={Medicamentos} />
-      <Tab.Screen name="Humano Prueba" component={BodyHuman} />
-      <Tab.Screen name="Chat" component={Chat} />
+      <Tab.Screen name="Cuerpo" component={BodyHuman} />
+      <Tab.Screen name="Asistente" component={Asistente} />
     </Tab.Navigator>
   );
 };
