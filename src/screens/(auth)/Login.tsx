@@ -21,11 +21,15 @@ export default function Login({ navigation }: LoginProps) {
 
     try {
       await login(email, password);
-      Alert.alert("Inicio de sesión exitoso", "Bienvenido de nuevo!");
+      setTimeout(() => {
+        Alert.alert("Inicio de sesión exitoso", "Bienvenido de nuevo!");
+      navigation.navigate("HomeTabs");
+      }, 500); // Retraso evitar pantalla negra
     } catch (error) {
       Alert.alert("Error", "Correo o contraseña incorrectos. Inténtalo de nuevo.");
     }
   };
+
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={[sharedStyles.container, { flex: 1 }]}>

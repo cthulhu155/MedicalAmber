@@ -31,18 +31,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  const login = async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      setUser(userCredential.user);
-      await AsyncStorage.setItem("user", JSON.stringify(userCredential.user));
-    } catch (error) {
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+const login = async (email: string, password: string) => {
+  setLoading(true);
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    setUser(userCredential.user);
+    await AsyncStorage.setItem("user", JSON.stringify(userCredential.user));
+
+    // Pequeña espera para una transición más fluida
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  } catch (error) {
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const logout = async () => {
     setLoading(true);
