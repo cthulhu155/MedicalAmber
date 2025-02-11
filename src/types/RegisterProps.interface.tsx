@@ -1,0 +1,3 @@
+interface RegisterProps {
+  navigation: any; 
+}
