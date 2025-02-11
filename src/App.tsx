@@ -1,27 +1,38 @@
 import React, { useEffect } from "react";
+import { View, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { AuthProvider, useAuth } from "./hooks/useAuth"; // Importa el hook de autenticación
+import { AuthProvider, useAuth } from "./hooks/useAuth"; // Hook de autenticación
 import Login from "../src/screens/(auth)/Login";
 import Register from "../src/screens/(auth)/Register";
-import BottomNavigationBar from "./components/BottomNavigationBar";
+import NavigationBar from "./components/NavigationBar";
 
-SplashScreen.preventAutoHideAsync(); // Evita que la pantalla de carga desaparezca automáticamente
+// Evita que la pantalla de carga desaparezca antes de que la app esté lista
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 const Stack = createNativeStackNavigator();
 
 function Navigation() {
-  const { user, loading } = useAuth(); // Obtiene el usuario autenticado
+  const { user, loading } = useAuth(); // Estado de autenticación
 
   useEffect(() => {
-    if (!loading) {
-      SplashScreen.hideAsync(); // Oculta la pantalla de carga cuando ya tenemos el estado del usuario
-    }
+    const hideSplash = async () => {
+      if (!loading) {
+        await SplashScreen.hideAsync();
+      }
+    };
+    hideSplash();
   }, [loading]);
 
-  if (loading) return null; // Muestra pantalla de carga mientras Firebase autentica
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#6C63FF" />
+      </View>
+    );
+  }
 
   return (
     <Stack.Navigator initialRouteName={user ? "HomeTabs" : "Login"} screenOptions={{ headerShown: false }}>
@@ -31,7 +42,7 @@ function Navigation() {
           <Stack.Screen name="Register" component={Register} />
         </>
       ) : (
-        <Stack.Screen name="HomeTabs" component={BottomNavigationBar} />
+        <Stack.Screen name="HomeTabs" component={NavigationBar} />
       )}
     </Stack.Navigator>
   );
@@ -42,7 +53,24 @@ export default function App() {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
-  if (!loaded) return null; // Evita renderizar la app hasta que las fuentes estén listas
+  useEffect(() => {
+    const prepareApp = async () => {
+      try {
+        await SplashScreen.preventAutoHideAsync();
+      } catch (e) {
+        console.warn(e);
+      }
+    };
+    prepareApp();
+  }, []);
+
+  if (!loaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#6C63FF" />
+      </View>
+    );
+  }
 
   return (
     <AuthProvider>

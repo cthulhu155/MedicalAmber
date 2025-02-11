@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Image, View, Text, TextInput, FlatList, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import styles from '../utils/Styles/HomeStyleSheet';
 
 export default function Home() {
   const [reminders, setReminders] = useState<Reminder[]>([
@@ -47,72 +48,3 @@ export default function Home() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#F5F5F5",
-  },
-  screenContainer: {
-    flex: 1,
-    padding: 20,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  listContainer: {
-    flexGrow: 1,
-    paddingBottom: 20,
-  },
-  screenTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  addButton: {
-    padding: 5,
-  },
-  reminderItem: {
-    backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 15,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  reminderContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#EDF5FF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 15,
-  },
-  textContainer: {
-    flex: 1,
-  },
-  reminderTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 4,
-  },
-  reminderTime: {
-    fontSize: 14,
-    color: '#666',
-  },
-});

@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+
 export const stylesbody = StyleSheet.create({
   safeArea: {
     flex: 1,

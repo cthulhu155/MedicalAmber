@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { StylesScreens } from '../utils/StyleSheet';
+import { StylesScreens } from '../utils/Styles/SheetStyle';
 
 
 type MedicamentoProps = {

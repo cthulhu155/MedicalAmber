@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Alert, TouchableOpacity } from "react-native";
-import { sharedStyles } from "../../utils/StyleSheetAuth";
+import { View, Text, TextInput, Alert, TouchableOpacity, ActivityIndicator } from "react-native";
+import { sharedStyles } from "../../utils/Styles/AuthStyleSheet";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../utils/config/firebase.config";
 import { useAuth } from "../../hooks/useAuth";
@@ -19,7 +19,7 @@ export default function Register({ navigation }: RegisterProps) {
 
   const handleRegister = async () => {
     if (!email || !password || !confirmPassword) {
-      Alert.alert("Error", "Por favor completa todos los campos.");
+      Alert.alert("Error", "Por favor, completa todos los campos.");
       return;
     }
 
@@ -33,25 +33,27 @@ export default function Register({ navigation }: RegisterProps) {
       return;
     }
 
-    // Imprimir los valores de email y password en la consola
-  // console.log("Datos enviados a Firebase:");
-  // console.log("Email:", email);
-  // console.log("Contraseña:", password);
-
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await AsyncStorage.setItem("user", JSON.stringify(userCredential.user));
       Alert.alert("Éxito", "Usuario registrado exitosamente.");
       
-      // Lo estoy forzando xD aun no encuentro otra fora 
-      if (navigation && navigation.navigate) {
-      navigation.navigate("HomeTabs");
-      } else {
-        console.error("Error: Navigation no está definido.");
+      if (navigation) {
+        navigation.navigate("HomeTabs");
       }
     } catch (error: any) {
-      Alert.alert("Error", error.message);
+      let errorMessage = "No se pudo completar el registro.";
+
+      if (error.code === "auth/email-already-in-use") {
+        errorMessage = "El correo electrónico ya está en uso.";
+      } else if (error.code === "auth/invalid-email") {
+        errorMessage = "El formato del correo es inválido.";
+      } else if (error.code === "auth/weak-password") {
+        errorMessage = "La contraseña es demasiado débil.";
+      }
+
+      Alert.alert("Error", errorMessage);
     }
     setLoading(false);
   };
@@ -68,7 +70,9 @@ export default function Register({ navigation }: RegisterProps) {
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
+        accessibilityLabel="Correo electrónico"
       />
+      
       <TextInput
         placeholder="Contraseña"
         placeholderTextColor="#ccc"
@@ -76,7 +80,9 @@ export default function Register({ navigation }: RegisterProps) {
         secureTextEntry
         value={password}
         onChangeText={setPassword}
+        accessibilityLabel="Contraseña"
       />
+      
       <TextInput
         placeholder="Confirmar Contraseña"
         placeholderTextColor="#ccc"
@@ -84,13 +90,23 @@ export default function Register({ navigation }: RegisterProps) {
         secureTextEntry
         value={confirmPassword}
         onChangeText={setConfirmPassword}
+        accessibilityLabel="Confirmar Contraseña"
       />
 
-      <TouchableOpacity style={sharedStyles.button} onPress={handleRegister} disabled={loading}>
-        <Text style={sharedStyles.buttonText}>{loading ? "Registrando..." : "Registrarse"}</Text>
+      <TouchableOpacity 
+        style={[sharedStyles.button, loading && { backgroundColor: "#aaa" }]} 
+        onPress={handleRegister} 
+        disabled={loading}
+        accessibilityLabel="Registrarse"
+      >
+        {loading ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <Text style={sharedStyles.buttonText}>Registrarse</Text>
+        )}
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity onPress={() => navigation.goBack()} accessibilityLabel="Volver al login">
         <Text style={sharedStyles.link}>Volver al Login</Text>
       </TouchableOpacity>
     </View>

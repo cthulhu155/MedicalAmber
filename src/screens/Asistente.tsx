@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Modal } from "react-native";
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Modal } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import BottomAddMedicine from "../components/BottonAddMedicine";
-
+import AddMedicineScreen from "../components/AddMedicine"; 
+import styles from "../utils/Styles/MedicalRemindersStyleSheet"; // Importa los estilos
 
 export default function MedicalReminders() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -16,17 +16,25 @@ export default function MedicalReminders() {
           <Ionicons name="medical-outline" size={24} color="#333" />
         </View>
 
-        <ScrollView style={styles.content}>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContainer} // ✅ Corrección del error
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>Your Reminders</Text>
+            <Ionicons name="notifications-off-outline" size={50} color="#ccc" />
+            <Text style={styles.cardTitle}>No Reminders</Text>
             <Text style={styles.cardText}>
-              No reminders yet. Add your first medical reminder!
+              You don't have any medical reminders. Click the "+" button to add one!
             </Text>
           </View>
         </ScrollView>
 
         {/* Botón para abrir el modal */}
-        <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+        <TouchableOpacity 
+          style={styles.addButton} 
+          onPress={() => setModalVisible(true)}
+          accessibilityLabel="Add a new medicine reminder"
+        >
           <Ionicons name="add-circle" size={60} color="#333" />
         </TouchableOpacity>
 
@@ -37,100 +45,20 @@ export default function MedicalReminders() {
           visible={modalVisible}
           onRequestClose={() => setModalVisible(false)}
         >
-          <View style={styles.modalContainer}>
+          <TouchableOpacity style={styles.modalContainer} onPress={() => setModalVisible(false)}>
             <View style={styles.modalContent}>
-              <BottomAddMedicine />
-              <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+              <AddMedicineScreen /> 
+              <TouchableOpacity 
+                style={styles.closeButton} 
+                onPress={() => setModalVisible(false)}
+                accessibilityLabel="Close medicine addition modal"
+              >
                 <Text style={styles.closeButtonText}>Close</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </TouchableOpacity>
         </Modal>
       </LinearGradient>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  gradient: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    paddingTop: 10,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 3,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#333',
-  },
-  cardText: {
-    fontSize: 16,
-    color: '#666',
-    lineHeight: 24,
-  },
-  addButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: 'transparent',
-    borderRadius: 30,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    width: '90%',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-  },
-  closeButton: {
-    marginTop: 15,
-    backgroundColor: '#6C63FF',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  closeButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});

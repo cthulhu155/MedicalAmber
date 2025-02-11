@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { View, Image, Text, TouchableOpacity, Alert, TextInput, KeyboardAvoidingView, ScrollView, Platform } from "react-native";
+import { View, Image, Text, TouchableOpacity, Alert, TextInput, KeyboardAvoidingView, ScrollView, Platform, ActivityIndicator } from "react-native";
 import { NavigationProp } from "@react-navigation/native";
-import { sharedStyles } from "../../utils/StyleSheetAuth"; 
 import { useAuth } from "../../hooks/useAuth";
+import { sharedStyles } from "../../utils/Styles/AuthStyleSheet";
 
 type LoginProps = {
   navigation: NavigationProp<any>;
@@ -13,28 +13,30 @@ export default function Login({ navigation }: LoginProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-
-  
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Error", "Por favor, introduce tu correo y contraseña.");
       return;
     }
-  //   
-  // console.log("Datos enviados a Firebase:");
-  // console.log("Email:", email);
-  // console.log("Contraseña:", password);
+
     try {
       await login(email, password);
-      setTimeout(() => {
-        Alert.alert("Inicio de sesión exitoso", "Bienvenido de nuevo!");
+      Alert.alert("Inicio de sesión exitoso", "Bienvenido de nuevo!");
       navigation.navigate("HomeTabs");
-      }, 500); // Retraso evitar pantalla negra
-    } catch (error) {
-      Alert.alert("Error", "Correo o contraseña incorrectos. Inténtalo de nuevo.");
+    } catch (error: any) {
+      let errorMessage = "Correo o contraseña incorrectos. Inténtalo de nuevo.";
+      
+      if (error.code === "auth/invalid-email") {
+        errorMessage = "El formato del correo es inválido.";
+      } else if (error.code === "auth/user-not-found") {
+        errorMessage = "No existe una cuenta con este correo.";
+      } else if (error.code === "auth/wrong-password") {
+        errorMessage = "La contraseña es incorrecta.";
+      }
+
+      Alert.alert("Error", errorMessage);
     }
   };
-
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={[sharedStyles.container, { flex: 1 }]}>
@@ -52,6 +54,7 @@ export default function Login({ navigation }: LoginProps) {
             onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
+            accessibilityLabel="Correo electrónico"
           />
 
           <TextInput
@@ -62,17 +65,35 @@ export default function Login({ navigation }: LoginProps) {
             onChangeText={setPassword}
             secureTextEntry
             autoCapitalize="none"
+            accessibilityLabel="Contraseña"
           />
 
-          <TouchableOpacity style={sharedStyles.button} onPress={handleLogin} disabled={loading}>
-            <Text style={sharedStyles.buttonText}>{loading ? "Cargando..." : "Iniciar sesión"}</Text>
+          <TouchableOpacity 
+            style={[sharedStyles.button, loading && { backgroundColor: "#aaa" }]} 
+            onPress={handleLogin} 
+            disabled={loading}
+            accessibilityLabel="Iniciar sesión"
+          >
+            {loading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={sharedStyles.buttonText}>Iniciar sesión</Text>
+            )}
           </TouchableOpacity>
 
-          <Text style={sharedStyles.link} onPress={() => navigation.navigate("Register")}>
+          <Text 
+            style={sharedStyles.link} 
+            onPress={() => navigation.navigate("Register")}
+            accessibilityLabel="Registrarse"
+          >
             ¿Nuevo usuario? Regístrate
           </Text>
 
-          <Text style={sharedStyles.help} onPress={() => Alert.alert("Ayuda", "Para más información, contacta soporte.")}>
+          <Text 
+            style={sharedStyles.help} 
+            onPress={() => Alert.alert("Ayuda", "Para más información, contacta soporte.")}
+            accessibilityLabel="Ayuda"
+          >
             ¿Necesitas ayuda?
           </Text>
         </View>
