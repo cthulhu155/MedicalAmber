@@ -52,7 +52,7 @@ export default function BodyHuman() {
         onBodyPartPress={handleBodyPartPress}
         side={side}
         gender="male"
-        scale={1.7}
+        scale={1.4}
         border="#dfdfdf"
         colors={["#0000FF"]}
       />

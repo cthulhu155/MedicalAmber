@@ -1,40 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import { Image, View, Text, TextInput, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, View, Text, TextInput, FlatList, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 
 export default function Home() {
-
   const [reminders, setReminders] = useState<Reminder[]>([
     { id: '1', title: 'Take Medicine', time: '09:00 AM' },
     { id: '2', title: 'Doctor Appointment', time: '02:30 PM' },
   ]);
 
-const renderReminderItem = ({ item }: { item: Reminder }) => (
-  <TouchableOpacity style={styles.reminderItem}>
-    <View>
-      <Text style={styles.reminderTitle}>{item.title}</Text>
-      <Text style={styles.reminderTime}>{item.time}</Text>
-    </View>
-  </TouchableOpacity>
-);
+  const renderReminderItem = ({ item }: { item: Reminder }) => (
+    <TouchableOpacity style={styles.reminderItem}>
+      <View>
+        <Text style={styles.reminderTitle}>{item.title}</Text>
+        <Text style={styles.reminderTime}>{item.time}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
-   <View style={styles.screenContainer}>
-      <Text style={styles.screenTitle}>Medical Reminders</Text>
-      <FlatList<Reminder>
-        data={reminders}
-        renderItem={renderReminderItem}
-        keyExtractor={(item) => item.id}
-      />
-    </View>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.screenContainer}>
+        <Text style={styles.screenTitle}>Medical Reminders</Text>
+        <FlatList<Reminder>
+          data={reminders}
+          renderItem={renderReminderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
-
 const styles = StyleSheet.create({
-  screenContainer: {
+  safeArea: {
     flex: 1,
     backgroundColor: "#F5F5F5",
+  },
+  screenContainer: {
+    flex: 1,
     padding: 20,
+  },
+  listContainer: {
+    flexGrow: 1,
   },
   screenTitle: {
     fontSize: 24,
