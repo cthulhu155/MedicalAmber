@@ -7,6 +7,7 @@ export const stylesbody = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 16,
+    backgroundColor: '#F5F5F5',
   },
   headerContainer: {
     marginBottom: 20,
