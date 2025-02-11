@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   switchText: {
     marginRight: 10,
     fontSize: 16,
-    color: "#666",
+    color: "#fff",
   },
   confirmButton: {
     backgroundColor: "#2196F3",

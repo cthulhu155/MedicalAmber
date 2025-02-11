@@ -51,5 +51,13 @@ export const StylesScreens = StyleSheet.create({
     height: 200,
     alignSelf: 'center',
     marginBottom: 20,
+    borderRadius: 100, // Makes
   },
+  clearIcon:{
+  
+  },
+  loader: {
+
+  }
+  
 });
