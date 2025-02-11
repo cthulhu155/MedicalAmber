@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { StyleSheet, Switch, Text, View, TouchableOpacity, SafeAreaView } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView } from "react-native";
 import Body, { ExtendedBodyPart } from "react-native-body-highlighter";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { stylesbody } from "../utils/StyleSheetBody"; 
 
 type RootStackParamList = {
   BodyHuman: undefined;
@@ -47,25 +49,52 @@ export default function BodyHuman() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={stylesbody.safeArea}>
       <LinearGradient
         colors={['#f0f9ff', '#ffffff']}
-        style={styles.container}
+        style={stylesbody.container}
       >
-        <View style={styles.headerContainer}>
-          <Text style={styles.title}>Selecciona las zonas afectadas</Text>
-          <View style={styles.switchContainer}>
-            <Text style={styles.switchText}>Vista {side === "front" ? "Frontal" : "Posterior"}</Text>
-            <Switch 
-              onValueChange={toggleSide} 
-              value={side === "front"}
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={side === "front" ? "#2196F3" : "#f4f3f4"}
-            />
+        <View style={stylesbody.headerContainer}>
+          <Text style={stylesbody.title}>Selecciona las zonas afectadas</Text>
+          <View style={stylesbody.viewToggleContainer}>
+            <TouchableOpacity
+              style={[
+                stylesbody.viewToggleButton,
+                side === "front" && stylesbody.viewToggleButtonActive
+              ]}
+              onPress={() => setSide("front")}
+            >
+              <MaterialCommunityIcons 
+                name="human-male" 
+                size={24} 
+                color={side === "front" ? "#fff" : "#582A72"} 
+              />
+              <Text style={[
+                stylesbody.viewToggleText,
+                side === "front" && stylesbody.viewToggleTextActive
+              ]}>Vista Frontal</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                stylesbody.viewToggleButton,
+                side === "back" && stylesbody.viewToggleButtonActive
+              ]}
+              onPress={() => setSide("back")}
+            >
+              <MaterialCommunityIcons 
+                name="human-male-board" 
+                size={24} 
+                color={side === "back" ? "#fff" : "#582A72"} 
+              />
+              <Text style={[
+                stylesbody.viewToggleText,
+                side === "back" && stylesbody.viewToggleTextActive
+              ]}>Vista Posterior</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.bodyContainer}>
+        <View style={stylesbody.bodyContainer}>
           <Body
             data={selectedParts}
             onBodyPartPress={handleBodyPartPress}
@@ -79,73 +108,13 @@ export default function BodyHuman() {
 
         {selectedParts.length > 0 && (
           <TouchableOpacity
-            style={styles.confirmButton}
+            style={stylesbody.confirmButton}
             onPress={handleConfirmSelection}
           >
-            <Text style={styles.buttonText}>Confirmar selección</Text>
+            <Text style={stylesbody.buttonText}>Confirmar selección</Text>
           </TouchableOpacity>
         )}
       </LinearGradient>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  headerContainer: {
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  bodyContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  switchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#f5f5f5",
-    padding: 10,
-    borderRadius: 12,
-  },
-  switchText: {
-    marginRight: 10,
-    fontSize: 16,
-    color: "#fff",
-  },
-  confirmButton: {
-    backgroundColor: "#2196F3",
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 25,
-    marginTop: 20,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-});

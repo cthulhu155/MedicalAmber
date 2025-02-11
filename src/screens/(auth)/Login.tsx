@@ -13,12 +13,17 @@ export default function Login({ navigation }: LoginProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+
+  
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Error", "Por favor, introduce tu correo y contraseña.");
       return;
     }
-
+  //   
+  // console.log("Datos enviados a Firebase:");
+  // console.log("Email:", email);
+  // console.log("Contraseña:", password);
     try {
       await login(email, password);
       setTimeout(() => {

@@ -1,28 +1,32 @@
 import React from "react";
-import { View, Text, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function Chat() {
+export default function MedicalReminders() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={['#4F6F52', '#739072']}
+        colors={['#f5f5f5', '#e0e0e0']}
         style={styles.gradient}
       >
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Asistente Virtual</Text>
-          <Ionicons name="chatbubbles-outline" size={24} color="white" />
+          <Text style={styles.headerTitle}>Medical Reminders</Text>
+          <Ionicons name="medical-outline" size={24} color="#333" />
         </View>
 
         <ScrollView style={styles.content}>
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>¿En qué puedo ayudarte?</Text>
+            <Text style={styles.cardTitle}>Your Reminders</Text>
             <Text style={styles.cardText}>
-              Soy tu asistente virtual, estoy aquí para responder tus dudas sobre medicamentos y síntomas.
+              No reminders yet. Add your first medical reminder!
             </Text>
           </View>
         </ScrollView>
+
+        <TouchableOpacity style={styles.addButton}>
+          <Ionicons name="add-circle" size={60} color="#333" />
+        </TouchableOpacity>
       </LinearGradient>
     </SafeAreaView>
   );
@@ -45,7 +49,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#333',
   },
   content: {
     flex: 1,
@@ -53,17 +57,17 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: 'white',
-    borderRadius: 15,
+    borderRadius: 12,
     padding: 20,
     marginBottom: 15,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 1,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
   },
   cardTitle: {
     fontSize: 18,
@@ -75,5 +79,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     lineHeight: 24,
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: 'transparent',
+    borderRadius: 30,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
 });

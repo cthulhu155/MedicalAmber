@@ -33,6 +33,11 @@ export default function Register({ navigation }: RegisterProps) {
       return;
     }
 
+    // Imprimir los valores de email y password en la consola
+  // console.log("Datos enviados a Firebase:");
+  // console.log("Email:", email);
+  // console.log("Contraseña:", password);
+
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);

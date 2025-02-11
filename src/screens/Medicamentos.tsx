@@ -17,10 +17,8 @@ export type MedicamentoLocal = {
   indicacionTerapeuticas: string;
 };
 
-// Tipo para el JSON de clasificación de medicamentos (sintomatología)
 export type MedicamentosClasificados = Record<string, string[]>;
 
-// Extraemos el primer objeto del arreglo de clasificación
 const medicamentosClasificados = (medicamentosClasificadosJSON as unknown as MedicamentosClasificados[])[0];
 
 /**
