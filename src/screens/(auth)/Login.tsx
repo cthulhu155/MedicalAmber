@@ -1,16 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Image, 
-  Text, 
-  TouchableOpacity, 
-  StyleSheet, 
-  Alert, 
-  TextInput,
-  KeyboardAvoidingView,
-  ScrollView,
-  Platform
-} from 'react-native';
+import { View, Image, Text, TouchableOpacity, StyleSheet, Alert, TextInput,KeyboardAvoidingView,ScrollView,  Platform} from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
 import { sharedStyles } from '../../utils/StyleSheetAuth'; 
 

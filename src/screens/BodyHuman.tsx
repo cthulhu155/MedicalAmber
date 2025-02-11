@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { StyleSheet, Switch, Text, View, Button } from "react-native";
+import { StyleSheet, Switch, Text, View, TouchableOpacity, SafeAreaView } from "react-native";
 import Body, { ExtendedBodyPart } from "react-native-body-highlighter";
 import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from 'expo-linear-gradient';
 
 type RootStackParamList = {
   BodyHuman: undefined;
@@ -46,43 +47,105 @@ export default function BodyHuman() {
   };
 
   return (
-    <View style={styles.container}>
-      <Body
-        data={selectedParts}
-        onBodyPartPress={handleBodyPartPress}
-        side={side}
-        gender="male"
-        scale={1.4}
-        border="#dfdfdf"
-        colors={["#0000FF"]}
-      />
-      <View style={styles.switchContainer}>
-        <Text>Side ({side})</Text>
-        <Switch onValueChange={toggleSide} value={side === "front"} />
-      </View>
-      {selectedParts.length > 0 && (
-        <View style={styles.confirmButtonContainer}>
-          <Button title="Confirmar selección" onPress={handleConfirmSelection} />
+    <SafeAreaView style={styles.safeArea}>
+      <LinearGradient
+        colors={['#f0f9ff', '#ffffff']}
+        style={styles.container}
+      >
+        <View style={styles.headerContainer}>
+          <Text style={styles.title}>Selecciona las zonas afectadas</Text>
+          <View style={styles.switchContainer}>
+            <Text style={styles.switchText}>Vista {side === "front" ? "Frontal" : "Posterior"}</Text>
+            <Switch 
+              onValueChange={toggleSide} 
+              value={side === "front"}
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={side === "front" ? "#2196F3" : "#f4f3f4"}
+            />
+          </View>
         </View>
-      )}
-    </View>
+
+        <View style={styles.bodyContainer}>
+          <Body
+            data={selectedParts}
+            onBodyPartPress={handleBodyPartPress}
+            side={side}
+            gender="male"
+            scale={1.4}
+            border="#dfdfdf"
+            colors={["#2196F3"]}
+          />
+        </View>
+
+        {selectedParts.length > 0 && (
+          <TouchableOpacity
+            style={styles.confirmButton}
+            onPress={handleConfirmSelection}
+          >
+            <Text style={styles.buttonText}>Confirmar selección</Text>
+          </TouchableOpacity>
+        )}
+      </LinearGradient>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  headerContainer: {
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  bodyContainer: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
   switchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 20,
+    justifyContent: "center",
+    backgroundColor: "#f5f5f5",
+    padding: 10,
+    borderRadius: 12,
   },
-  confirmButtonContainer: {
+  switchText: {
+    marginRight: 10,
+    fontSize: 16,
+    color: "#666",
+  },
+  confirmButton: {
+    backgroundColor: "#2196F3",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
     marginTop: 20,
-    width: "80%",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });
