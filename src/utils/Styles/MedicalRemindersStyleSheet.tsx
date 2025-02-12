@@ -1,6 +1,9 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+  icon: {
+    marginTop: 50,
+  },
   container: {
     flex: 1,
   },
@@ -18,6 +21,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
+    marginTop: 50,
   },
   scrollContainer: { // ✅ Corrección: Mueve alignItems y justifyContent aquí
     flexGrow: 1,
@@ -37,6 +41,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 3,
     width: '90%',
+    marginBottom: 80,
   },
   cardTitle: {
     fontSize: 18,

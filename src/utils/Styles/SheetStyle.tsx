@@ -50,7 +50,7 @@ export const StylesScreens = StyleSheet.create({
     width: 200,
     height: 200,
     alignSelf: 'center',
-    marginBottom: 20,
+    marginBottom: 1,
     borderRadius: 100, // Makes
   },
   clearIcon:{

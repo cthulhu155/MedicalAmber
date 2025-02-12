@@ -1,13 +1,22 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Image, View, Text, TextInput, FlatList } from "react-native";
+import {
+  Image,
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  useWindowDimensions
+} from "react-native";
 import { useRoute } from "@react-navigation/native";
 import medicamentosJSON from "../../medicamentos.json";
 import medicamentosClasificadosJSON from "../../medicamentos_clasificados.json";
 import { StylesScreens } from "../utils/Styles/SheetStyle";
 import MedicamentoCard from "../components/MedicamentoCard";
+
 export type MedicamentosClasificados = Record<string, string[]>;
 
-const medicamentosClasificados: MedicamentosClasificados = medicamentosClasificadosJSON[0] as MedicamentosClasificados;
+const medicamentosClasificados: MedicamentosClasificados =
+  medicamentosClasificadosJSON[0] as MedicamentosClasificados;
 
 // Función de normalización para búsquedas más precisas
 const normalize = (text: string): string =>
@@ -18,11 +27,19 @@ const normalize = (text: string): string =>
     .trim();
 
 export default function Medicamentos() {
+  // Obtén las dimensiones actuales de la pantalla
+  const { width } = useWindowDimensions();
+  // Definir un ancho base (por ejemplo, 375, típico en muchos dispositivos móviles)
+  const BASE_WIDTH = 375;
+  // Calcular el factor de escala en función del ancho actual
+  const scaleFactor = width / BASE_WIDTH;
+
   const route = useRoute();
   const params = route.params as { bodyParts?: string[] } | undefined;
 
   // Estado inicial basado en los parámetros de la ruta
-  const initialBusqueda = params?.bodyParts?.length ? params.bodyParts.join(" ") : "";
+  const initialBusqueda =
+    params?.bodyParts?.length ? params.bodyParts.join(" ") : "";
   const [busqueda, setBusqueda] = useState(initialBusqueda);
   const [medicamentos] = useState<MedicamentoLocal[]>(medicamentosJSON);
 
@@ -59,7 +76,10 @@ export default function Medicamentos() {
     // 3. Búsqueda en claves de clasificación parcialmente coincidentes
     let additionalResults: MedicamentoLocal[] = [];
     Object.keys(medicamentosClasificados).forEach((key) => {
-      if (normalize(key).includes(terminoNormalized) && normalize(key) !== terminoNormalized) {
+      if (
+        normalize(key).includes(terminoNormalized) &&
+        normalize(key) !== terminoNormalized
+      ) {
         additionalResults = additionalResults.concat(
           medicamentos.filter((med) =>
             medicamentosClasificados[key].some(
@@ -88,12 +108,42 @@ export default function Medicamentos() {
   }, [params]);
 
   return (
-    <View style={[StylesScreens.container, { flex: 1 }]}>
-      <Image source={require("../../assets/images/MedicalAmber.png")} style={StylesScreens.logoImage} />
-      <Text style={StylesScreens.header}>MedicalAmber</Text>
+    <View style={[StylesScreens.container, { flex: 1, padding: 16 * scaleFactor }]}>
+      <Image
+        source={require("../../assets/images/MedicalAmber.png")}
+        style={[
+          StylesScreens.logoImage,
+          {
+            width: 150 * scaleFactor,
+            height: 150 * scaleFactor,
+            alignSelf: "center",
+            marginVertical: 20 * scaleFactor,
+          },
+        ]}
+        resizeMode="contain"
+      />
+      <Text
+        style={[
+          StylesScreens.header,
+          {
+            fontSize: 28 * scaleFactor,
+            textAlign: "center",
+            marginBottom: 20 * scaleFactor,
+          },
+        ]}
+      >
+        MedicalAmber
+      </Text>
 
       <TextInput
-        style={StylesScreens.input}
+        style={[
+          StylesScreens.input,
+          {
+            fontSize: 16 * scaleFactor,
+            padding: 10 * scaleFactor,
+            marginBottom: 20 * scaleFactor,
+          },
+        ]}
         placeholder="Buscar medicamento..."
         value={busqueda}
         onChangeText={setBusqueda}
@@ -102,9 +152,20 @@ export default function Medicamentos() {
       <FlatList
         data={medicamentosFiltrados}
         keyExtractor={(item) => item.numero}
-        renderItem={({ item }) => <MedicamentoCard medicamento={item} />}
+        renderItem={({ item }) => (
+          <MedicamentoCard medicamento={item} scaleFactor={scaleFactor} />
+        )}
         ListEmptyComponent={
-          <Text style={StylesScreens.noResults}>
+          <Text
+            style={[
+              StylesScreens.noResults,
+              {
+                fontSize: 16 * scaleFactor,
+                textAlign: "center",
+                marginTop: 20 * scaleFactor,
+              },
+            ]}
+          >
             No se encontraron medicamentos. Prueba con otro término.
           </Text>
         }

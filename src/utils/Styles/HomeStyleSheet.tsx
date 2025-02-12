@@ -23,9 +23,11 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     color: "#333",
+    marginTop: 30,
   },
   addButton: {
     padding: 5,
+    marginTop:30,
   },
   reminderItem: {
     backgroundColor: 'white',

@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 export const stylesbody = StyleSheet.create({
   safeArea: {
@@ -8,16 +8,15 @@ export const stylesbody = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: "#F5F5F5",
   },
   headerContainer: {
     marginBottom: 20,
   },
   title: {
-    fontSize: 24,
     fontWeight: "bold",
     color: "#333",
-    marginBottom: 16,
+    marginTop: 30,
     textAlign: "center",
   },
   bodyContainer: {
@@ -32,6 +31,7 @@ export const stylesbody = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     padding: 8,
     borderRadius: 25,
+    marginTop: 16,
   },
   viewToggleButton: {
     flexDirection: "row",
@@ -48,7 +48,6 @@ export const stylesbody = StyleSheet.create({
   },
   viewToggleText: {
     marginLeft: 8,
-    fontSize: 16,
     color: "#582A72",
     fontWeight: "600",
   },
@@ -72,7 +71,6 @@ export const stylesbody = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
-    fontSize: 18,
     fontWeight: "600",
     textAlign: "center",
   },

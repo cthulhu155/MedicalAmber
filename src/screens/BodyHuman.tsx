@@ -1,19 +1,31 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, Alert } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  SafeAreaView,
+  Alert,
+  useWindowDimensions,
+} from "react-native";
 import Body, { ExtendedBodyPart } from "react-native-body-highlighter";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { stylesbody } from "../utils/Styles/BodyStyle"; 
+import { stylesbody } from "../utils/Styles/BodyStyle";
 
 type RootStackParamList = {
-  [x: string]: any; // no c pq pero funciona 
+  [x: string]: any;
   BodyHuman: undefined;
   Medicamentos: { bodyParts: string[] };
 };
 
 export default function BodyHuman() {
-  const navigation = useNavigation<RootStackParamList>(); // Tipado correcto
+  const navigation = useNavigation<RootStackParamList>();
+  const { width } = useWindowDimensions();
+  // Define un ancho base (por ejemplo, 375 que es típico en muchos móviles)
+  const BASE_WIDTH = 375;
+  // Calcula un factor de escala según el ancho actual
+  const scaleFactor = width / BASE_WIDTH;
 
   const [selectedParts, setSelectedParts] = useState<ExtendedBodyPart[]>([]);
   const [side, setSide] = useState<"front" | "back">("front");
@@ -24,19 +36,20 @@ export default function BodyHuman() {
     hand: "Dolor muscular",
     leg: "Dolor muscular",
     stomach: "Dolor estomacal",
-    chest: "Problemas respiratorios"
+    chest: "Problemas respiratorios",
   };
 
   const handleBodyPartPress = (part: ExtendedBodyPart) => {
-    setSelectedParts(prevParts => {
-      const exists = prevParts.some(p => p.slug === part.slug);
+    setSelectedParts((prevParts) => {
+      const exists = prevParts.some((p) => p.slug === part.slug);
       return exists
-        ? prevParts.filter(p => p.slug !== part.slug)
+        ? prevParts.filter((p) => p.slug !== part.slug)
         : [...prevParts, { ...part, intensity: 1 }];
     });
   };
 
-  const toggleSide = () => setSide(prev => (prev === "front" ? "back" : "front"));
+  const toggleSide = () =>
+    setSide((prev) => (prev === "front" ? "back" : "front"));
 
   const handleConfirmSelection = () => {
     if (selectedParts.length === 0) {
@@ -45,8 +58,8 @@ export default function BodyHuman() {
     }
 
     const selectedSymptoms = selectedParts
-      .filter(p => p.slug) // Filtra valores indefinidos
-      .map(p => bodyPartToSymptom[p.slug!] || p.slug!);
+      .filter((p) => p.slug)
+      .map((p) => bodyPartToSymptom[p.slug!] || p.slug!);
 
     navigation.navigate("Medicamentos", { bodyParts: selectedSymptoms });
   };
@@ -55,44 +68,56 @@ export default function BodyHuman() {
     <SafeAreaView style={stylesbody.safeArea}>
       <LinearGradient colors={["#f0f9ff", "#ffffff"]} style={stylesbody.container}>
         <View style={stylesbody.headerContainer}>
-          <Text style={stylesbody.title}>Selecciona las zonas afectadas</Text>
+          <Text style={[stylesbody.title, { fontSize: 24 * scaleFactor }]}>
+            Selecciona las zonas afectadas
+          </Text>
           <View style={stylesbody.viewToggleContainer}>
             <TouchableOpacity
               style={[
                 stylesbody.viewToggleButton,
-                side === "front" && stylesbody.viewToggleButtonActive
+                side === "front" && stylesbody.viewToggleButtonActive,
               ]}
               onPress={() => setSide("front")}
               accessibilityLabel="Vista Frontal"
             >
-              <MaterialCommunityIcons 
-                name="human-male" 
-                size={24} 
-                color={side === "front" ? "#fff" : "#582A72"} 
+              <MaterialCommunityIcons
+                name="human-male"
+                size={24 * scaleFactor}
+                color={side === "front" ? "#fff" : "#582A72"}
               />
-              <Text style={[
-                stylesbody.viewToggleText,
-                side === "front" && stylesbody.viewToggleTextActive
-              ]}>Vista Frontal</Text>
+              <Text
+                style={[
+                  stylesbody.viewToggleText,
+                  side === "front" && stylesbody.viewToggleTextActive,
+                  { fontSize: 16 * scaleFactor },
+                ]}
+              >
+                Vista Frontal
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[
                 stylesbody.viewToggleButton,
-                side === "back" && stylesbody.viewToggleButtonActive
+                side === "back" && stylesbody.viewToggleButtonActive,
               ]}
               onPress={() => setSide("back")}
               accessibilityLabel="Vista Posterior"
             >
-              <MaterialCommunityIcons 
-                name="human-male-board" 
-                size={24} 
-                color={side === "back" ? "#fff" : "#582A72"} 
+              <MaterialCommunityIcons
+                name="human-male-board"
+                size={24 * scaleFactor}
+                color={side === "back" ? "#fff" : "#582A72"}
               />
-              <Text style={[
-                stylesbody.viewToggleText,
-                side === "back" && stylesbody.viewToggleTextActive
-              ]}>Vista Posterior</Text>
+              <Text
+                style={[
+                  stylesbody.viewToggleText,
+                  side === "back" && stylesbody.viewToggleTextActive,
+                  { fontSize: 16 * scaleFactor },
+                ]}
+              >
+                Vista Posterior
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -103,7 +128,8 @@ export default function BodyHuman() {
             onBodyPartPress={handleBodyPartPress}
             side={side}
             gender="male"
-            scale={1.4}
+            // Escala dinámica en función del ancho de la pantalla
+            scale={1.4 * scaleFactor}
             border="#dfdfdf"
             colors={["#2196F3"]}
           />
@@ -112,13 +138,15 @@ export default function BodyHuman() {
         <TouchableOpacity
           style={[
             stylesbody.confirmButton,
-            selectedParts.length === 0 && { backgroundColor: "#aaa" } // Botón deshabilitado si no hay selección
+            selectedParts.length === 0 && { backgroundColor: "#aaa" },
           ]}
           onPress={handleConfirmSelection}
           disabled={selectedParts.length === 0}
           accessibilityLabel="Confirmar selección"
         >
-          <Text style={stylesbody.buttonText}>Confirmar selección</Text>
+          <Text style={[stylesbody.buttonText, { fontSize: 18 * scaleFactor }]}>
+            Confirmar selección
+          </Text>
         </TouchableOpacity>
       </LinearGradient>
     </SafeAreaView>

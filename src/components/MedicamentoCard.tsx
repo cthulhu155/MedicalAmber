@@ -5,6 +5,7 @@ import { StylesScreens } from '../utils/Styles/SheetStyle';
 
 type MedicamentoProps = {
   medicamento: MedicamentoLocal;
+  scaleFactor: number;
 };
 
 const MedicamentoCard: React.FC<MedicamentoProps> = ({ medicamento }) => {
