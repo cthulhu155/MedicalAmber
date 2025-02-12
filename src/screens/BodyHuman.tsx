@@ -22,7 +22,7 @@ type RootStackParamList = {
 export default function BodyHuman() {
   const navigation = useNavigation<RootStackParamList>();
   const { width } = useWindowDimensions();
-  // Define un ancho base (por ejemplo, 375 que es típico en muchos móviles)
+  // Define un ancho base (por ejemplo, 375, típico en muchos móviles)
   const BASE_WIDTH = 375;
   // Calcula un factor de escala según el ancho actual
   const scaleFactor = width / BASE_WIDTH;
@@ -40,12 +40,70 @@ export default function BodyHuman() {
   };
 
   const handleBodyPartPress = (part: ExtendedBodyPart) => {
-    setSelectedParts((prevParts) => {
-      const exists = prevParts.some((p) => p.slug === part.slug);
-      return exists
-        ? prevParts.filter((p) => p.slug !== part.slug)
-        : [...prevParts, { ...part, intensity: 1 }];
-    });
+    // Lógica para el grupo "forearm" y "hands"
+    if (["forearm", "hands"].includes(part.slug || "")) {
+      const isSelected = selectedParts.some(
+        (p) => p.slug === "forearm" || p.slug === "hands"
+      );
+      if (isSelected) {
+        setSelectedParts((prevParts) =>
+          prevParts.filter(
+            (p) => p.slug !== "forearm" && p.slug !== "hands"
+          )
+        );
+      } else {
+        setSelectedParts((prevParts) => [
+          ...prevParts,
+          { slug: "forearm", intensity: 1 },
+          { slug: "hands", intensity: 1 },
+        ]);
+      }
+    }
+    else if (["quadriceps", "adductors"].includes(part.slug || "")) {
+      const isSelected = selectedParts.some(
+        (p) => p.slug === "quadriceps" || p.slug === "adductors"
+      );
+      if (isSelected) {
+        setSelectedParts((prevParts) =>
+          prevParts.filter(
+            (p) => p.slug !== "quadriceps" && p.slug !== "adductors"
+          )
+        );
+      } else {
+        setSelectedParts((prevParts) => [
+          ...prevParts,
+          { slug: "quadriceps", intensity: 1 },
+          { slug: "adductors", intensity: 1 },
+        ]);
+      }
+    }
+    else if (["tibialis", "calves"].includes(part.slug || "")) {
+      const isSelected = selectedParts.some(
+        (p) => p.slug === "tibialis" || p.slug === "calves"
+      );
+      if (isSelected) {
+        setSelectedParts((prevParts) =>
+          prevParts.filter(
+            (p) => p.slug !== "tibialis" && p.slug !== "calves"
+          )
+        );
+      } else {
+        setSelectedParts((prevParts) => [
+          ...prevParts,
+          { slug: "tibialis", intensity: 1 },
+          { slug: "calves", intensity: 1 },
+        ]);
+      }
+    }
+    // Para el resto de partes, se realiza el toggle normal
+    else {
+      setSelectedParts((prevParts) => {
+        const exists = prevParts.some((p) => p.slug === part.slug);
+        return exists
+          ? prevParts.filter((p) => p.slug !== part.slug)
+          : [...prevParts, { ...part, intensity: 1 }];
+      });
+    }
   };
 
   const toggleSide = () =>
@@ -68,7 +126,7 @@ export default function BodyHuman() {
     <SafeAreaView style={stylesbody.safeArea}>
       <LinearGradient colors={["#f0f9ff", "#ffffff"]} style={stylesbody.container}>
         <View style={stylesbody.headerContainer}>
-          <Text style={[stylesbody.title, { fontSize: 24 * scaleFactor }]}>
+          <Text style={[stylesbody.title, { fontSize: 23 * scaleFactor }]}>
             Selecciona las zonas afectadas
           </Text>
           <View style={stylesbody.viewToggleContainer}>
@@ -128,7 +186,6 @@ export default function BodyHuman() {
             onBodyPartPress={handleBodyPartPress}
             side={side}
             gender="male"
-            // Escala dinámica en función del ancho de la pantalla
             scale={1.4 * scaleFactor}
             border="#dfdfdf"
             colors={["#2196F3"]}
