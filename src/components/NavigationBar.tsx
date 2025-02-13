@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Home from '../screens/Home';
 import Medicamentos from '../screens/Medicamentos';
 import BodyHuman from '../screens/BodyHuman';
-import Asistente from '../screens/Asistente';
+import MedicalReminders from '../screens/MedicalRemainder';
 
 // Configuración centralizada en un archivo aparte
 import { TAB_BAR_STYLE, TAB_ICONS } from '../hooks/navigationConfig';
@@ -19,7 +19,7 @@ const NavigationBar = () => {
     { name: 'Home', component: Home },
     { name: 'Medicamentos', component: Medicamentos },
     { name: 'Cuerpo', component: BodyHuman },
-    { name: 'Asistente', component: Asistente },
+    { name: 'Recordatorios', component: MedicalReminders },
   ], []);
 
   const renderTabBarIcon = (route: keyof typeof TAB_ICONS, color: string, size: number) => (

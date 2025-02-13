@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     color: '#333',
     marginTop: 50,
   },
-  scrollContainer: { // ✅ Corrección: Mueve alignItems y justifyContent aquí
+  scrollContainer: {
     flexGrow: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -76,25 +76,62 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   modalContent: {
-    width: '90%',
+    width: "100%",
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1, // Para asegurar que se vea bien en pantallas pequeñas
+    flex: 1,
   },
   closeButton: {
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
     marginTop: 15,
     backgroundColor: '#6C63FF',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 8,
   },
   closeButtonText: {
-    color: 'white',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    width: "90%",
+    maxHeight: "90%",
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 20,
+    elevation: 5,
+  },
+  reminderCard: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 10,
+    width: "90%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  reminderTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  reminderText: {
+    fontSize: 16,
+    color: "#666",
   },
 });
 

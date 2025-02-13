@@ -2,7 +2,7 @@ export const TAB_ICONS: Record<string, string> = {
   Home: 'home',
   Medicamentos: 'pill',
   Cuerpo: 'human',
-  Asistente: 'robot',
+  Recordatorios: 'alarm',
 };
 
 export const TAB_BAR_STYLE = {
