@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  SafeAreaView,
-  ScrollView,
-  TouchableOpacity,
-  Modal,
-  useWindowDimensions
-} from "react-native";
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Modal, useWindowDimensions} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import AddMedicineScreen from "../components/AddMedicine"; 

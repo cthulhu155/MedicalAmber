@@ -75,8 +75,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: "100%",
   },
-  modalContent: {
-    width: '90%',
+    modalContent: {
+    width: "100%",
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,
@@ -85,17 +85,32 @@ const styles = StyleSheet.create({
     flex: 1, // Para asegurar que se vea bien en pantallas pequeñas
   },
   closeButton: {
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
     marginTop: 15,
     backgroundColor: '#6C63FF',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 8,
   },
   closeButtonText: {
-    color: 'white',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+    },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
-});
+  modalView: {
+    width: "90%",
+    maxHeight: "90%",
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 20,
+    elevation: 5,
+  }});
 
-export default styles;
+  export default styles;
