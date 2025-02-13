@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, SafeAreaView, StatusBar, RefreshControl } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, SafeAreaView, StatusBar, ScrollView } from 'react-native';
 import baseStyles from '../utils/Styles/HomeStyleSheet';
 import { useReminders } from '../hooks/useReminders';
-import ReminderItem from '../components/ReminderItem';
+import HomeHeader from '../components/HomeHeader';
+import HomeList from '../components/HomeList';
 import AddMedicineForm from '../components/AddMedicine';
 import { MedicineReminder } from '../types/Reminder.interface';
 
@@ -19,34 +19,33 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={[baseStyles.safeArea, { backgroundColor: '#F8F9FA' }]}>
       <StatusBar barStyle="dark-content" backgroundColor="#F8F9FA" />
-      <View style={[baseStyles.screenContainer, { padding: 16 }]}>
-        <View style={[baseStyles.header, { marginBottom: 20 }]}>
-          <Text style={[baseStyles.screenTitle, { fontSize: 28, fontWeight: 'bold' }]}>
-            Medical Reminders
+      <ScrollView
+        style={[baseStyles.screenContainer, { padding: 16 }]}
+        refreshControl={
+          <View /> // Placeholder, usamos refresh en HomeList
+        }
+      >
+        {/* Header */}
+        <HomeHeader onAddPress={() => setModalVisible(true)} />
+
+        {/* Aviso sobre automedicación */}
+        <View style={[baseStyles.warningContainer, { padding: 12, backgroundColor: '#FFF3CD', borderRadius: 10, marginBottom: 16 }]}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: '#856404' }}>
+            ⚠️ Aviso importante:
           </Text>
-          <TouchableOpacity
-            style={[baseStyles.addButton, { backgroundColor: '#4A90E2', borderRadius: 30, padding: 8 }]}
-            onPress={() => setModalVisible(true)}
-          >
-            <Ionicons name="add" size={28} color="#FFFFFF" />
-          </TouchableOpacity>
+          <Text style={{ fontSize: 12, color: '#856404', marginTop: 4 }}>
+            Esta aplicación es solo para fines informativos. No fomenta la automedicación. 
+            Consulte siempre a su médico antes de tomar cualquier medicamento.
+          </Text>
         </View>
 
-        <FlatList
-          data={reminders}
-          renderItem={({ item }) => <ReminderItem item={item} />}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={[baseStyles.listContainer, { paddingBottom: 20 }]}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl 
-              refreshing={refreshing} 
-              onRefresh={onRefresh} 
-              tintColor="#4A90E2" 
-            />
-          }
+        {/* Lista de Recordatorios */}
+        <HomeList 
+          reminders={reminders} 
+          refreshing={refreshing} 
+          onRefresh={onRefresh} 
         />
-      </View>
+      </ScrollView>
 
       {/* Modal para añadir recordatorio */}
       <AddMedicineForm

@@ -69,6 +69,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
+  warningContainer: {
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 16,
+    backgroundColor: '#FFF3CD',
+    borderWidth: 1,
+    borderColor: '#856404',
+  },
+
+
 });
 
 export default styles;
