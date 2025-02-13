@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   Alert,
   useWindowDimensions,
+  Platform,
 } from "react-native";
 import Body, { ExtendedBodyPart } from "react-native-body-highlighter";
 import { useNavigation } from "@react-navigation/native";
@@ -22,10 +23,11 @@ type RootStackParamList = {
 export default function BodyHuman() {
   const navigation = useNavigation<RootStackParamList>();
   const { width } = useWindowDimensions();
-  // Define un ancho base (por ejemplo, 375, típico en muchos móviles)
-  const BASE_WIDTH = 375;
-  // Calcula un factor de escala según el ancho actual
+  const BASE_WIDTH = 375; // ancho base típico
   const scaleFactor = width / BASE_WIDTH;
+
+  // Usamos Platform para definir la escala del componente Body
+  const bodyScale = Platform.OS === "ios" ? 1.23 * scaleFactor : 1.4 * scaleFactor;
 
   const [selectedParts, setSelectedParts] = useState<ExtendedBodyPart[]>([]);
   const [side, setSide] = useState<"front" | "back">("front");
@@ -40,16 +42,14 @@ export default function BodyHuman() {
   };
 
   const handleBodyPartPress = (part: ExtendedBodyPart) => {
-    // Lógica para el grupo "forearm" y "hands"
+    // Grupo "forearm" y "hands"
     if (["forearm", "hands"].includes(part.slug || "")) {
       const isSelected = selectedParts.some(
         (p) => p.slug === "forearm" || p.slug === "hands"
       );
       if (isSelected) {
         setSelectedParts((prevParts) =>
-          prevParts.filter(
-            (p) => p.slug !== "forearm" && p.slug !== "hands"
-          )
+          prevParts.filter((p) => p.slug !== "forearm" && p.slug !== "hands")
         );
       } else {
         setSelectedParts((prevParts) => [
@@ -59,6 +59,7 @@ export default function BodyHuman() {
         ]);
       }
     }
+    // Grupo "quadriceps" y "adductors"
     else if (["quadriceps", "adductors"].includes(part.slug || "")) {
       const isSelected = selectedParts.some(
         (p) => p.slug === "quadriceps" || p.slug === "adductors"
@@ -77,6 +78,7 @@ export default function BodyHuman() {
         ]);
       }
     }
+    // Grupo "tibialis" y "calves"
     else if (["tibialis", "calves"].includes(part.slug || "")) {
       const isSelected = selectedParts.some(
         (p) => p.slug === "tibialis" || p.slug === "calves"
@@ -95,7 +97,7 @@ export default function BodyHuman() {
         ]);
       }
     }
-    // Para el resto de partes, se realiza el toggle normal
+    // Toggle normal para el resto
     else {
       setSelectedParts((prevParts) => {
         const exists = prevParts.some((p) => p.slug === part.slug);
@@ -153,7 +155,6 @@ export default function BodyHuman() {
                 Vista Frontal
               </Text>
             </TouchableOpacity>
-
             <TouchableOpacity
               style={[
                 stylesbody.viewToggleButton,
@@ -186,7 +187,7 @@ export default function BodyHuman() {
             onBodyPartPress={handleBodyPartPress}
             side={side}
             gender="male"
-            scale={1.4 * scaleFactor}
+            scale={bodyScale}
             border="#dfdfdf"
             colors={["#2196F3"]}
           />
