@@ -1,31 +1,14 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Modal,
-  FlatList,
-  SafeAreaView,
-  ScrollView,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Modal, FlatList, SafeAreaView, ScrollView,} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import styles from "../utils/Styles/AddRemindersStyleSheet";
 
-interface MedicineReminder {
-  id: string;
-  name: string;
-  dosage: string;
-  time: string;
-  frequency: string;
-}
-
 export default function MedicalReminders() {
   const [modalVisible, setModalVisible] = useState(false);
-  const [reminders, setReminders] = useState<MedicineReminder[]>([]);
+  const [reminders, setReminders] = useState<ReminderAdd[]>([]);
   const [newMedicine, setNewMedicine] = useState({
     name: "",
     dosage: "",
@@ -37,16 +20,18 @@ export default function MedicalReminders() {
   const handleTimeChange = (event: any, selectedTime?: Date) => {
     setShowTimePicker(false);
     if (selectedTime) {
-      setNewMedicine({ ...newMedicine, time: selectedTime });
+      setNewMedicine({ ...newMedicine, time: selectedTime.toISOString() }); // no se pq marca error si ya se supone que es stringxDDDDD
     }
   };
 
+
   const handleAddMedicine = () => {
-    if (newMedicine.name.trim() === "" || newMedicine.dosage.trim() === "") return;
-    setReminders([...reminders, { ...newMedicine, id: Date.now().toString() }]);
-    setNewMedicine({ name: "", dosage: "", time: new Date(), frequency: "1" });
-    setModalVisible(false);
-  };
+  if (newMedicine.name.trim() === "" || newMedicine.dosage.trim() === "") return;
+  setReminders([...reminders, { ...newMedicine, id: Date.now().toString(), time: newMedicine.time.toString() }]);
+  setNewMedicine({ name: "", dosage: "", time: new Date().toISOString(), frequency: "1" }); // no se pq marca error si ya se supone que es stringxDDDDD
+  setModalVisible(false);
+};
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -69,7 +54,7 @@ export default function MedicalReminders() {
               renderItem={({ item }) => (
                 <View style={styles.reminderCard}>
                   <Text>{item.name} - {item.dosage}</Text>
-                  <Text>Hora: {item.time.toLocaleTimeString()}</Text>
+                  <Text>Hora: {new Date(item.time).toLocaleTimeString()}</Text>
                   <Text>Días: {item.frequency}</Text>
                 </View>
               )}
