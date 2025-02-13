@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, Alert } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { Picker } from "@react-native-picker/picker";
 import styles from "../utils/Styles/AddRemindersStyleSheet";
 
 interface AddMedicineFormProps {
