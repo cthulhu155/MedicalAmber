@@ -1,82 +1,59 @@
 import React, { useState } from 'react';
-import {
-  Image,
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  SafeAreaView,
-  useWindowDimensions,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, SafeAreaView, StatusBar, FlatList } from 'react-native';
 import baseStyles from '../utils/Styles/HomeStyleSheet';
+import { useReminders } from '../hooks/useReminders';
+import HomeHeader from '../components/HomeHeader';
+import ReminderItem from '../components/ReminderItem';
+import AddMedicineForm from '../components/AddMedicine';
+import { MedicineReminder } from '../types/Reminder.interface';
 
-export default function Home() {
-  // Obtenemos el ancho actual de la pantalla
-  const { width } = useWindowDimensions();
-  // Definimos un ancho base (por ejemplo, 375 puntos, típico en muchos móviles)
-  const BASE_WIDTH = 375;
-  // Calculamos el factor de escala
-  const scaleFactor = width / BASE_WIDTH;
+export default function HomeScreen() {
+  const { reminders, refreshing, onRefresh, addReminder } = useReminders();
+  const [isModalVisible, setModalVisible] = useState(false);
 
-  const [reminders, setReminders] = useState<Reminder[]>([
-    { id: '1', title: 'Take Medicine', time: '09:00 AM', type: 'medication' },
-    { id: '2', title: 'Doctor Appointment', time: '02:30 PM', type: 'appointment' },
-  ]);
-
-  const renderReminderItem = ({ item }: { item: Reminder }) => (
-    <TouchableOpacity style={baseStyles.reminderItem}>
-      <View style={baseStyles.reminderContent}>
-        <View style={baseStyles.iconContainer}>
-          <Ionicons 
-            name={item.type === 'medication' ? 'medical' : 'calendar'} 
-            size={24 * scaleFactor} 
-            color="#4A90E2"
-          />
-        </View>
-        <View style={baseStyles.textContainer}>
-          <Text style={[baseStyles.reminderTitle, { fontSize: 16 * scaleFactor }]}>
-            {item.title}
-          </Text>
-          <Text style={[baseStyles.reminderTime, { fontSize: 14 * scaleFactor }]}>
-            {item.time}
-          </Text>
-        </View>
-        <Ionicons 
-          name="chevron-forward" 
-          size={24 * scaleFactor} 
-          color="#CCCCCC" 
-        />
-      </View>
-    </TouchableOpacity>
-  );
+  const handleAddMedicine = (newMedicine: MedicineReminder) => {
+    addReminder({ ...newMedicine, type: 'medication' });
+    setModalVisible(false);
+  };
 
   return (
-    <SafeAreaView style={baseStyles.safeArea}>
-      <View style={[baseStyles.screenContainer, { padding: 16 * scaleFactor }]}>
-        <View style={baseStyles.header}>
-          <Text style={[baseStyles.screenTitle, { fontSize: 24 * scaleFactor }]}>
-            Medical Reminders
-          </Text>
-          <TouchableOpacity style={baseStyles.addButton}>
-            <Ionicons 
-              name="add-circle" 
-              size={32 * scaleFactor} 
-              color="#4A90E2" 
-            />
-          </TouchableOpacity>
-        </View>
-        <FlatList
-          data={reminders}
-          renderItem={renderReminderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={[
-            baseStyles.listContainer,
-            { paddingBottom: 20 * scaleFactor },
-          ]}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
+    <SafeAreaView style={[baseStyles.safeArea, { backgroundColor: '#F8F9FA' }]}>
+      <StatusBar barStyle="dark-content" backgroundColor="#F8F9FA" />
+
+      {/* Lista principal como FlatList (sin ScrollView) */}
+      <FlatList
+        ListHeaderComponent={
+          <>
+            {/* Header */}
+            <HomeHeader onAddPress={() => setModalVisible(true)} />
+
+            {/* Aviso sobre automedicación */}
+            <View style={[baseStyles.warningContainer, { padding: 12, backgroundColor: '#FFF3CD', borderRadius: 10, marginBottom: 16 }]}>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: '#856404' }}>
+                ⚠️ Aviso importante:
+              </Text>
+              <Text style={{ fontSize: 12, color: '#856404', marginTop: 4 }}>
+                Esta aplicación es solo para fines informativos. No fomenta la automedicación. 
+                Consulte siempre a su médico antes de tomar cualquier medicamento.
+              </Text>
+            </View>
+          </>
+        }
+        data={reminders}
+        renderItem={({ item }) => <ReminderItem item={item} />}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        showsVerticalScrollIndicator={false}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+      />
+
+      {/* Modal para añadir recordatorio */}
+      <AddMedicineForm
+        visible={isModalVisible}
+        onAdd={handleAddMedicine}
+        onClose={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }

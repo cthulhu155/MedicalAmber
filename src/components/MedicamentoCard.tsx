@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { StylesScreens } from '../utils/Styles/SheetStyle';
+import { MedicamentoLocal } from '../types/Medicamentos.interface';
 
 
 type MedicamentoProps = {
