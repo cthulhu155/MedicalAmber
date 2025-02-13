@@ -1,27 +1,30 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, Alert } from "react-native";
 import styles from "../utils/Styles/AddRemindersStyleSheet";
+import { MedicineReminder } from "../types/Reminder.interface";
 
 interface AddMedicineFormProps {
   visible: boolean;
-  onAdd: (medicine: { id: string; name: string; dosage: string; time: string; frequency: string }) => void;
+  onAdd: (medicine: MedicineReminder) => void;
   onClose: () => void;
 }
 
-export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicineFormProps) {
-  const [newMedicine, setNewMedicine] = useState({
-    name: "",
-    dosage: "",
-    time: new Date().toISOString(),
-    frequency: "1",
-  });
-  const [showTimePicker, setShowTimePicker] = useState(false);
+const INITIAL_MEDICINE_REMINDER: Omit<MedicineReminder, 'id'> & Partial<Pick<MedicineReminder, 'type'>> = {
+  name: "",
+  dosage: "",
+  time: new Date().toISOString(),
+  frequency: "1",
+  type: "medication",
+  notes: "",
+  reminderSound: "default",
+  isRecurring: false,
+};
 
-  const handleTimeChange = (_event: unknown, selectedTime?: Date) => {
-    setShowTimePicker(false);
-    if (selectedTime) {
-      setNewMedicine((prev) => ({ ...prev, time: selectedTime.toISOString() }));
-    }
+export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicineFormProps) {
+  const [newMedicine, setNewMedicine] = useState(INITIAL_MEDICINE_REMINDER);
+
+  const handleInputChange = (field: keyof typeof INITIAL_MEDICINE_REMINDER, value: string) => {
+    setNewMedicine((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleAddMedicine = () => {
@@ -30,27 +33,31 @@ export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicine
       return;
     }
     onAdd({ ...newMedicine, id: Date.now().toString() });
-    setNewMedicine({ name: "", dosage: "", time: new Date().toISOString(), frequency: "1" });
+    setNewMedicine(INITIAL_MEDICINE_REMINDER);
     onClose();
   };
+
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text>Nombre del Medicamento</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ej. Paracetamol"
-            value={newMedicine.name}
-            onChangeText={(text) => setNewMedicine((prev) => ({ ...prev, name: text }))}
-          />
-          
+          <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>Añadir Nuevo Recordatorio</Text>
+
+          <Text>Nombre:</Text>
+          <TextInput style={styles.input} placeholder="Ej. Paracetamol" value={newMedicine.name} onChangeText={(text) => handleInputChange("name", text)} />
+
+          <Text>Dosis:</Text>
+          <TextInput style={styles.input} placeholder="Ej. 500mg" value={newMedicine.dosage} onChangeText={(text) => handleInputChange("dosage", text)} />
+
+          <Text>Notas:</Text>
+          <TextInput style={styles.input} placeholder="Notas adicionales" value={newMedicine.notes} onChangeText={(text) => handleInputChange("notes", text)} />
+
           <TouchableOpacity style={styles.confirmButton} onPress={handleAddMedicine}>
-            <Text style={styles.confirmText}>Añadir</Text>
+            <Text style={styles.confirmText}>Añadir Recordatorio</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeText}>Cerrar</Text>
+            <Text style={styles.closeText}>Cancelar</Text>
           </TouchableOpacity>
         </View>
       </View>
