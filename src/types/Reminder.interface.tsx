@@ -7,10 +7,10 @@ interface Reminder {
 };
 
 //este se utiliza en addmedication para agregar las alarmas
-interface ReminderAdd {
+export interface MedicineReminder {
   id: string;
   name: string;
   dosage: string;
-  time: string | Date; // Permitir ambos tipos
+  time: string;
   frequency: string;
 }

@@ -1,4 +1,4 @@
-type MedicamentoLocal = {
+export type MedicamentoLocal = {
   numero: string;
   farmaco: string;
   formaFarmaceutica: string;
