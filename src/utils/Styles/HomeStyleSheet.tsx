@@ -77,6 +77,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#856404',
   },
+  iconButton: {
+    padding: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 
 
 });

@@ -21,11 +21,8 @@ const normalize = (text: string): string =>
     .trim();
 
 export default function Medicamentos() {
-  // Obtén las dimensiones actuales de la pantalla
   const { width } = useWindowDimensions();
-  // Definir un ancho base (por ejemplo, 375, típico en muchos dispositivos móviles)
   const BASE_WIDTH = 375;
-  // Calcular el factor de escala en función del ancho actual
   const scaleFactor = width / BASE_WIDTH;
 
   const route = useRoute();

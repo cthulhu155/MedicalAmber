@@ -8,6 +8,7 @@ import AddMedicineForm from '../components/AddMedicine';
 import { MedicineReminder } from '../types/Reminder.interface';
 
 export default function HomeScreen() {
+
   const { reminders, refreshing, onRefresh, addReminder } = useReminders();
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -55,5 +56,6 @@ export default function HomeScreen() {
         onClose={() => setModalVisible(false)}
       />
     </SafeAreaView>
+
   );
 }
