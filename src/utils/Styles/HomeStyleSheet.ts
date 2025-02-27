@@ -1,5 +1,4 @@
 import { StyleSheet } from "react-native";
-
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -11,23 +10,34 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: 'space-between', // Alinea el título a la izquierda y los íconos a la derecha
+    alignItems: 'center', // Centra verticalmente los elementos
     marginBottom: 20,
+    paddingHorizontal: 20,
+    paddingTop: 15,
   },
   listContainer: {
     flexGrow: 1,
     paddingBottom: 20,
   },
   screenTitle: {
-    fontSize: 28,
+    fontSize: 25,
     fontWeight: "bold",
     color: "#333",
-    marginTop: 30,
+    marginVertical: 15,
+    flex: 1, // Permite que el título ocupe el espacio disponible
+  },
+  headerIconsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16, // 1rem de espacio entre íconos
   },
   addButton: {
-    padding: 5,
-    marginTop:30,
+    padding: 10,
+    backgroundColor: '#4A90E2',
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   reminderItem: {
     backgroundColor: 'white',
@@ -78,13 +88,10 @@ const styles = StyleSheet.create({
     borderColor: '#856404',
   },
   iconButton: {
-    padding: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 30,
+    padding: 10,
+    borderRadius: 30,
+    backgroundColor: '#EDF5FF',
   },
-
-
 });
 
 export default styles;

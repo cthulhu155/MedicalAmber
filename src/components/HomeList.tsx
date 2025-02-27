@@ -24,7 +24,9 @@ const HomeList: React.FC<HomeListProps> = ({ reminders, refreshing, onRefresh })
         <FlatList
           data={reminders}
           // Renderiza cada recordatorio usando el componente ReminderItem
-          renderItem={({ item }) => <ReminderItem item={item} />}
+          renderItem={({ item }) => <ReminderItem item={item} onDelete={function (id: string): void {
+            throw new Error('Function not implemented.');
+          } } />}
           // Usa el ID del recordatorio como key
           keyExtractor={(item) => item.id}
           // Agrega padding inferior para mejor visualización

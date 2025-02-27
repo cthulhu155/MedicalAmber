@@ -3,6 +3,7 @@ import { View, Image, Text, TouchableOpacity, Alert, TextInput, KeyboardAvoiding
 import { NavigationProp } from "@react-navigation/native";
 import { useAuth } from "../../hooks/useAuth";
 import { sharedStyles } from "../../utils/Styles/AuthStyleSheet";
+import { Ionicons } from '@expo/vector-icons';
 
 type LoginProps = {
   navigation: NavigationProp<any>;
@@ -12,6 +13,7 @@ export default function Login({ navigation }: LoginProps) {
   const { login, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -57,16 +59,36 @@ export default function Login({ navigation }: LoginProps) {
             accessibilityLabel="Correo electrónico"
           />
 
-          <TextInput
-            style={sharedStyles.input}
-            placeholder="Contraseña"
-            placeholderTextColor="#ccc"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            autoCapitalize="none"
-            accessibilityLabel="Contraseña"
-          />
+          <View style={{ width: '100%', position: 'relative' }}>
+            <TextInput
+              style={[sharedStyles.input, { paddingRight: 50 }]}
+              placeholder="Contraseña"
+              placeholderTextColor="#ccc"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPassword}
+              autoCapitalize="none"
+              accessibilityLabel="Contraseña"
+            />
+            <TouchableOpacity 
+              style={{ 
+                position: 'absolute',
+                right: 15,
+                top: '50%',
+                transform: [{ translateY: -12 }],
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: 24 // Added fixed height to help with centering
+              }}
+              onPress={() => setShowPassword(!showPassword)}
+            >
+              <Ionicons 
+                name={showPassword ? "eye-off" : "eye"} 
+                size={24} 
+                color="#666"
+              />
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity 
             style={[sharedStyles.button, loading && { backgroundColor: "#aaa" }]} 
