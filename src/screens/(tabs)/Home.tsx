@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, StatusBar, FlatList } from 'react-native';
-import baseStyles from '../utils/Styles/HomeStyleSheet';
-import { useReminders } from '../hooks/useReminders';
-import HomeHeader from '../components/HomeHeader';
-import ReminderItem from '../components/ReminderItem';
-import AddMedicineForm from '../components/AddMedicine';
-import { MedicineReminder } from '../types/Reminder.interface';
+import baseStyles from '../../utils/Styles/HomeStyleSheet';
+import { useReminders } from '../../hooks/useReminders';
+import HomeHeader from '../../components/HomeHeader';
+import ReminderItem from '../../components/ReminderItem';
+import AddMedicineForm from '../../components/AddMedicine';
+import { MedicineReminder } from '../../types/Reminder.interface';
 
 export default function HomeScreen() {
 

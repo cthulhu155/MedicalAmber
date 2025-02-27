@@ -9,3 +9,7 @@ export interface MedicineReminder {
   reminderSound: string;
   isRecurring: boolean;
 }
+export interface ReminderItemProps {
+  item: MedicineReminder;
+  onPress?: () => void;
+}

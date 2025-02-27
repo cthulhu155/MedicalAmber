@@ -7,3 +7,8 @@ export type MedicamentoLocal = {
   titular: string;
   indicacionTerapeuticas: string;
 };
+
+export type MedicamentoProps = {
+  medicamento: MedicamentoLocal;
+  scaleFactor: number;
+};

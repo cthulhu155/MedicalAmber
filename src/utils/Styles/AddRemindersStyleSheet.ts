@@ -32,6 +32,8 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 2,
+    elevation: 5,
     marginBottom: 10,
   },
   addButton: {
@@ -54,6 +56,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "90%",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   input: {
     width: "100%",
@@ -84,10 +91,20 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginTop: 10,
+    padding: 10,
+    backgroundColor: "#333",
+    borderRadius: 5,
   },
   closeText: {
-    color: "#FF4444",
+    color: "#fff",
     fontSize: 16,
+    fontWeight: "bold",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 });
 

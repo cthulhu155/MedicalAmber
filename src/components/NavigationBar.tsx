@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+// Importar las pantallas
 
-// Screens
-import Home from '../screens/Home';
-import Medicamentos from '../screens/Medicamentos';
-import BodyHuman from '../screens/BodyHuman';
 // Configuración centralizada en un archivo aparte
 import { TAB_BAR_STYLE, TAB_ICONS } from '../hooks/navigationConfig';
+import BodyHuman from '../screens/(tabs)/BodyHuman';
+import Home from '../screens/(tabs)/Home';
+import Medicamentos from '../screens/(tabs)/Medicamentos';
 
 const Tab = createBottomTabNavigator();
 
