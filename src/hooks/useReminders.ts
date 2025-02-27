@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { MedicineReminder } from '../types/Reminder.interface';
 import { auth } from '../utils/config/firebase.config';
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
@@ -9,33 +9,38 @@ export const useReminders = () => {
   const [loading, setLoading] = useState(false);
   const db = getFirestore();
 
-  // Fetch reminders from Firestore
   const fetchReminders = useCallback(async () => {
     setLoading(true);
     try {
       const userId = auth.currentUser?.uid;
-      if (!userId) return;
-
+      if (!userId) {
+        console.error("Usuario no autenticado");
+        return;
+      }
       const querySnapshot = await getDocs(collection(db, `users/${userId}/reminders`));
       const fetchedReminders = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+        ...doc.data(),
+        id: doc.id  // Se asegura que el id del documento sobrescriba cualquier id en los datos
       })) as MedicineReminder[];
-      
       setReminders(fetchedReminders);
     } catch (error) {
       console.error('Error fetching reminders:', error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [db]);
 
-  // Add new reminder
+  useEffect(() => {
+    fetchReminders();
+  }, [fetchReminders]);
+
   const addReminder = async (newReminder: Omit<MedicineReminder, 'id'>) => {
     try {
       const userId = auth.currentUser?.uid;
-      if (!userId) return;
-
+      if (!userId) {
+        console.error("Usuario no autenticado");
+        return;
+      }
       const docRef = await addDoc(collection(db, `users/${userId}/reminders`), newReminder);
       setReminders(prev => [...prev, { ...newReminder, id: docRef.id }]);
     } catch (error) {
@@ -43,28 +48,29 @@ export const useReminders = () => {
     }
   };
 
-  // Delete reminder
   const deleteReminder = async (id: string) => {
     try {
       const userId = auth.currentUser?.uid;
-      if (!userId) return;
-
+      if (!userId) {
+        console.error("Usuario no autenticado");
+        return;
+      }
+      console.log("Intentando eliminar recordatorio:", id, "para el UID:", userId);
       await deleteDoc(doc(db, `users/${userId}/reminders/${id}`));
       setReminders(prev => prev.filter(reminder => reminder.id !== id));
+      console.log("Recordatorio eliminado de Firebase.");
     } catch (error) {
       console.error('Error deleting reminder:', error);
     }
   };
 
-  // Update reminder
   const updateReminder = async (id: string, updatedData: Partial<MedicineReminder>) => {
     try {
       const userId = auth.currentUser?.uid;
       if (!userId) return;
-
       await updateDoc(doc(db, `users/${userId}/reminders/${id}`), updatedData);
-      setReminders(prev => 
-        prev.map(reminder => 
+      setReminders(prev =>
+        prev.map(reminder =>
           reminder.id === id ? { ...reminder, ...updatedData } : reminder
         )
       );
@@ -73,7 +79,6 @@ export const useReminders = () => {
     }
   };
 
-  // Refresh data
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await fetchReminders();

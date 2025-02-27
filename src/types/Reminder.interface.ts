@@ -12,4 +12,6 @@ export interface MedicineReminder {
 export interface ReminderItemProps {
   item: MedicineReminder;
   onPress?: () => void;
+  onDelete: (id: string) => void;
 }
+

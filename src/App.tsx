@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "./hooks/useAuth"; // Hook de autenticaciÃ
 import Login from "../src/screens/(auth)/Login";
 import Register from "../src/screens/(auth)/Register";
 import NavigationBar from "./components/NavigationBar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Evita que la pantalla de carga desaparezca antes de que la app estÃ© lista
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -74,9 +75,11 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <NavigationContainer>
-        <Navigation />
-      </NavigationContainer>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NavigationContainer>
+          <Navigation />
+        </NavigationContainer>
+      </GestureHandlerRootView>
     </AuthProvider>
   );
 }
