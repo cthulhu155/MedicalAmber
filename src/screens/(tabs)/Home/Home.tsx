@@ -51,7 +51,6 @@ export default function HomeScreen() {
         reminders={reminders}
         refreshing={refreshing}
         onRefresh={onRefresh}
-        onDelete={deleteReminder}
       />
 
       {/* Modal para añadir un nuevo recordatorio de medicamento */}

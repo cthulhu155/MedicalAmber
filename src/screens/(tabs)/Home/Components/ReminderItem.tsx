@@ -1,5 +1,4 @@
-// screens/(tabs)/Home/components/ReminderItem.tsx
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   Text,
@@ -16,13 +15,32 @@ import baseStyles from '../Styles/HomeStyleSheet';
 interface ReminderItemProps {
   item: MedicineReminder;
   onDelete: (id: string) => void;
-  // Si necesitas onEdit, onPress, etc., agrégalos aquí
 }
 
 const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete }) => {
   const { width } = useWindowDimensions();
   const scaleFactor = width / 375;
+  const swipeableRef = useRef<Swipeable>(null);
 
+  // Función que se encarga de eliminar y cerrar el swipeable
+  const handleDelete = () => {
+    onDelete(item.id);
+    swipeableRef.current?.close();
+  };
+
+  // Muestra un Alert con opciones al presionar el item
+  const handleOptions = () => {
+    Alert.alert('Opciones', 'Seleccione una acción', [
+      {
+        text: 'Eliminar',
+        onPress: handleDelete,
+        style: 'destructive',
+      },
+      { text: 'Cancelar', style: 'cancel' },
+    ]);
+  };
+
+  // Formatea la hora para mostrarla en formato "hh:mm"
   const formatTime = (timeString: string) => {
     const date = new Date(timeString);
     return date.toLocaleString('es-ES', {
@@ -31,28 +49,11 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete }) => {
     });
   };
 
-  const handleOptions = () => {
-    Alert.alert('Opciones', 'Seleccione una acción', [
-      {
-        text: 'Eliminar',
-        onPress: () => onDelete(item.id),
-        style: 'destructive',
-      },
-      { text: 'Cancelar', style: 'cancel' },
-    ]);
-  };
-
+  // Renderiza la acción de eliminación al hacer swipe
   const renderRightActions = () => (
     <View style={styles.actionContainer}>
-      <TouchableOpacity
-        onPress={() => onDelete(item.id)}
-        style={styles.deleteAction}
-      >
-        <Ionicons
-          name="trash-outline"
-          size={24 * scaleFactor}
-          color="white"
-        />
+      <TouchableOpacity onPress={handleDelete} style={styles.deleteAction}>
+        <Ionicons name="trash-outline" size={24 * scaleFactor} color="white" />
         <Text style={[styles.actionText, { marginLeft: 8 }]}>Eliminar</Text>
       </TouchableOpacity>
     </View>
@@ -60,7 +61,9 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete }) => {
 
   return (
     <Swipeable
+      ref={swipeableRef}
       renderRightActions={renderRightActions}
+      onSwipeableOpen={handleDelete}
       rightThreshold={width / 4}
       overshootRight={false}
       friction={2}
@@ -69,7 +72,7 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete }) => {
       <TouchableOpacity
         style={[baseStyles.reminderItem, { elevation: 3 }]}
         activeOpacity={0.7}
-        onPress={handleOptions} // O lo que necesites
+        onPress={handleOptions}
       >
         <View style={baseStyles.reminderContent}>
           <View
@@ -103,7 +106,11 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete }) => {
                 marginTop: 4,
               }}
             >
-              <Ionicons name="time-outline" size={14 * scaleFactor} color="#666" />
+              <Ionicons
+                name="time-outline"
+                size={14 * scaleFactor}
+                color="#666"
+              />
               <Text
                 style={[
                   baseStyles.reminderTime,
@@ -112,13 +119,7 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete }) => {
               >
                 {formatTime(item.time)}
               </Text>
-              <Text
-                style={{
-                  fontSize: 14 * scaleFactor,
-                  marginLeft: 8,
-                  color: '#666',
-                }}
-              >
+              <Text style={{ fontSize: 14 * scaleFactor, marginLeft: 8, color: '#666' }}>
                 • {item.frequency}
               </Text>
             </View>
@@ -127,9 +128,7 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete }) => {
             onPress={handleOptions}
             style={{ justifyContent: 'center', height: '100%' }}
           >
-            <Text style={{ fontSize: 24 * scaleFactor, color: '#CCCCCC' }}>
-              ...
-            </Text>
+            <Text style={{ fontSize: 24 * scaleFactor, color: '#CCCCCC' }}>...</Text>
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
