@@ -5,9 +5,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // Configuración centralizada en un archivo aparte
 import { TAB_BAR_STYLE, TAB_ICONS } from '../hooks/navigationConfig';
-import BodyHuman from '../screens/(tabs)/BodyHuman';
-import Home from '../screens/(tabs)/Home';
-import Medicamentos from '../screens/(tabs)/Medicamentos';
+import BodyHuman from '../screens/(tabs)/BodyHuman/BodyHuman';
+
+import Medicamentos from '../screens/(tabs)/Medicamentos/Medicamentos';
+import Home from '../screens/(tabs)/Home/Home';
 
 const Tab = createBottomTabNavigator();
 

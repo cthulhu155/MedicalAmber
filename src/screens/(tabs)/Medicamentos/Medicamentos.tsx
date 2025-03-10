@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Image, View, Text, TextInput, FlatList, useWindowDimensions } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import medicamentosJSON from "../../../medicamentos.json";
-import medicamentosClasificadosJSON from "../../../medicamentos_clasificados.json";
-import { StylesScreens } from "../../utils/Styles/SheetStyle";
-import MedicamentoCard from "../../components/MedicamentoCard";
-import { MedicamentoLocal } from "../../types/Medicamentos.interface";
+import medicamentosJSON from "../../../../medicamentos.json";
+import medicamentosClasificadosJSON from "../../../../medicamentos_clasificados.json";
+import { StylesScreens } from "../../../utils/Styles/SheetStyle";
+import MedicamentoCard from "../Home/Components/MedicineCard";
+import { MedicamentoLocal } from "../../../types/Medicamentos.interface";
 
 export type MedicamentosClasificados = Record<string, string[]>;
 

@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
-import { ReminderItemProps } from '../types/Reminder.interface';
-import baseStyles from '../utils/Styles/HomeStyleSheet';
+import { ReminderItemProps } from '../../../../types/Reminder.interface';
+import baseStyles from '../Styles/HomeStyleSheet';
 
 interface Props extends ReminderItemProps {
   onDelete: (id: string) => void;

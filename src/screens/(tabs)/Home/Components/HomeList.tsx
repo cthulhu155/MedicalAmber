@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, FlatList, Text, RefreshControl } from 'react-native';
-import { MedicineReminder } from '../types/Reminder.interface';
+import { MedicineReminder } from '../../../../types/Reminder.interface';
 import ReminderItem from './ReminderItem';
-import baseStyles from '../utils/Styles/HomeStyleSheet';
-import { HomeListProps } from '../types/HomeListProps.interface';
+import baseStyles from '../Styles/HomeStyleSheet';
+import { HomeListProps } from '../../../../types/HomeListProps.interface';
 
 const HomeList: React.FC<HomeListProps> = ({ reminders, refreshing, onRefresh }) => {
   return (

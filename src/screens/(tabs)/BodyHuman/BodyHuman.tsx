@@ -12,7 +12,7 @@ import Body, { ExtendedBodyPart } from "react-native-body-highlighter";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { stylesbody } from "../../utils/Styles/BodyStyle";
+import { stylesbody } from "../../../utils/Styles/BodyStyle";
 
 type RootStackParamList = {
   [x: string]: any;

@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, Alert } from "react-native";
 import { Calendar } from "react-native-calendars";
-import styles from "../utils/Styles/AddRemindersStyleSheet";
-import { MedicineReminder } from "../types/Reminder.interface";
-import { AddMedicineFormProps } from "../types/AddMedicineFormProps.interface";
+import styles from "../../../../utils/Styles/AddRemindersStyleSheet";
+import { MedicineReminder } from "../../../../types/Reminder.interface";
+import { AddMedicineFormProps } from "../../../../types/AddMedicineFormProps.interface";
 
 const INITIAL_MEDICINE_REMINDER: Omit<MedicineReminder, 'id'> & Partial<Pick<MedicineReminder, 'type'>> = {
   name: "",
   dosage: "",
-  time: new Date().toLocaleString('es-ES'),
+  time: new Date().toISOString(),
   frequency: "1",
   type: "medication",
   notes: "",             // Se agrega la propiedad 'notes'

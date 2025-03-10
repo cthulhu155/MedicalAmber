@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import baseStyles from '../utils/Styles/HomeStyleSheet';
-import { HomeHeaderProps } from '../types/HomeHeaderProps.interface';
-import styles from '../utils/Styles/HomeStyleSheet';
+import baseStyles from '../Styles/HomeStyleSheet';
+import { HomeHeaderProps } from '../../../../types/HomeHeaderProps.interface';
+import styles from '../Styles/HomeStyleSheet';
 
 /**
  * Componente HomeHeader

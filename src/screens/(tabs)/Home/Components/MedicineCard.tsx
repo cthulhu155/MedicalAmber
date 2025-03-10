@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { StylesScreens } from '../utils/Styles/SheetStyle';
-import { MedicamentoProps } from '../types/Medicamentos.interface';
+import { MedicamentoProps } from '../../../../types/Medicamentos.interface';
+import { StylesScreens } from '../Styles/MedicineCardStyleSheet';
 
 // Componente que muestra la información de un medicamento en forma de tarjeta
 const MedicamentoCard: React.FC<MedicamentoProps> = ({ medicamento }) => {
@@ -24,5 +24,5 @@ const MedicamentoCard: React.FC<MedicamentoProps> = ({ medicamento }) => {
   );
 };
 
-// Exportación del componente
+// Exportación del component
 export default MedicamentoCard;
