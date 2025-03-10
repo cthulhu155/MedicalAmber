@@ -18,36 +18,29 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({
   onSearchPress 
 }) => {
   return (
-     <View style={styles.parent}>
-      <View style={styles.me}>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={onProfilePress}
-        >
-          <Ionicons name="person-outline" size={24} color="#4A90E2" />
-        </TouchableOpacity>
-      </View>
+    <View style={styles.parent}>
+  {/* Ícono del perfil */}
+  <TouchableOpacity style={styles.iconButton} onPress={onProfilePress}>
+    <Ionicons name="person-outline" size={24} color="#4A90E2" />
+  </TouchableOpacity>
 
-      <View style={styles.title}>
-        <Text style={styles.screenTitle}>Medical Amber</Text>
-      </View>
+  {/* Contenedor del título, ahora centrado */}
+  <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <Text style={styles.screenTitle}>Medical Amber</Text>
+  </View>
 
-      <View style={styles.notificationAndAddReminder}>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={onNotificationsPress}
-        >
-          <Ionicons name="notifications-outline" size={24} color="#4A90E2" />
-        </TouchableOpacity>
+  {/* Íconos de notificación y añadir */}
+  <View style={styles.notificationAndAddReminder}>
+    <TouchableOpacity style={styles.iconButton} onPress={onNotificationsPress}>
+      <Ionicons name="notifications-outline" size={24} color="#4A90E2" />
+    </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={onAddPress}
-        >
-          <Ionicons name="add" size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
-    </View>
+    <TouchableOpacity style={styles.addButton} onPress={onAddPress}>
+      <Ionicons name="add" size={20} color="#FFFFFF" />
+    </TouchableOpacity>
+  </View>
+</View>
+
   );
 };
 

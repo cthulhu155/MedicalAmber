@@ -101,7 +101,7 @@ export default function Medicamentos() {
   return (
     <View style={[StylesScreens.container, { flex: 1, padding: 16 * scaleFactor }]}>
       <Image
-        source={require("../../../assets/images/MedicalAmber.png")}
+        source={require("../../../../assets/images/MedicalAmber.png")}
         style={[
           StylesScreens.logoImage,
           {

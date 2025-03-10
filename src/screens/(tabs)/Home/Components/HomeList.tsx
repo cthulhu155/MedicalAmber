@@ -1,44 +1,57 @@
+// screens/(tabs)/Home/components/HomeList.tsx
 import React from 'react';
-import { View, FlatList, Text, RefreshControl } from 'react-native';
+import { View, Text, FlatList, RefreshControl } from 'react-native';
 import { MedicineReminder } from '../../../../types/Reminder.interface';
 import ReminderItem from './ReminderItem';
 import baseStyles from '../Styles/HomeStyleSheet';
-import { HomeListProps } from '../../../../types/HomeListProps.interface';
 
-const HomeList: React.FC<HomeListProps> = ({ reminders, refreshing, onRefresh }) => {
+interface HomeListProps {
+  reminders: MedicineReminder[];
+  refreshing: boolean;
+  onRefresh: () => void;
+  onDelete: (id: string) => void;
+}
+
+export default function HomeList({
+  reminders,
+  refreshing,
+  onRefresh,
+  onDelete,
+}: HomeListProps) {
   return (
     <View style={baseStyles.listContainer}>
       {reminders.length === 0 ? (
-        <Text style={{ textAlign: 'center', color: '#666', fontSize: 16, marginVertical: 20 }}>
+        <Text
+          style={{
+            textAlign: 'center',
+            color: '#666',
+            fontSize: 16,
+            marginVertical: 20,
+          }}
+        >
           No hay recordatorios aún.
         </Text>
       ) : (
-          <FlatList
-            data={reminders}
-            renderItem={({ item }) => (
-              <ReminderItem
-                item={item}
-                onDelete={() => {/* ... */}}
-                onEdit={() => {/* ... */}}
-                onCheck={() => {/* ... */}}
-                onPress={() => {/* ... */}}
-              />
-            )}
-            keyExtractor={(item) => item.id}
-            // Ajustar o eliminar el padding bottom
-            contentContainerStyle={{ paddingBottom: 0 }}
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                tintColor="#4A90E2"
-              />
-            }
-          />
+        <FlatList
+          data={reminders}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <ReminderItem
+              item={item}
+              onDelete={() => {/* ... */}}
+            />
+          )}
+
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor="#4A90E2"
+            />
+          }
+          showsVerticalScrollIndicator={false}
+        />
       )}
     </View>
   );
-};
-
-export default HomeList;
+}

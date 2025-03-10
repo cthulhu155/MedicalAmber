@@ -1,53 +1,67 @@
+// screens/(tabs)/Home/components/ReminderItem.tsx
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  useWindowDimensions,
+  Alert,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
-import { ReminderItemProps } from '../../../../types/Reminder.interface';
+import { MedicineReminder } from '../../../../types/Reminder.interface';
 import baseStyles from '../Styles/HomeStyleSheet';
 
-interface Props extends ReminderItemProps {
+interface ReminderItemProps {
+  item: MedicineReminder;
   onDelete: (id: string) => void;
-  onEdit: (id: string) => void;
-  onCheck: (id: string) => void;
+  // Si necesitas onEdit, onPress, etc., agrégalos aquí
 }
 
-const ReminderItem: React.FC<Props> = ({ item, onPress, onDelete, onEdit }) => {
+const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete }) => {
   const { width } = useWindowDimensions();
   const scaleFactor = width / 375;
 
   const formatTime = (timeString: string) => {
     const date = new Date(timeString);
-    return date.toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   const handleOptions = () => {
-    Alert.alert(
-      'Opciones',
-      'Seleccione una acción',
-      [
-        { text: 'Editar', onPress: () => onEdit(item.id) },
-        { text: 'Eliminar', onPress: () => onDelete(item.id), style: 'destructive' },
-        { text: 'Cancelar', style: 'cancel' },
-      ],
-      { cancelable: true }
-    );
+    Alert.alert('Opciones', 'Seleccione una acción', [
+      {
+        text: 'Eliminar',
+        onPress: () => onDelete(item.id),
+        style: 'destructive',
+      },
+      { text: 'Cancelar', style: 'cancel' },
+    ]);
   };
 
-  const renderRightActions = () => {
-    return (
-      <View style={styles.actionContainer}>
-        <TouchableOpacity onPress={() => onDelete(item.id)} style={styles.deleteAction}>
-          <Ionicons name="trash-outline" size={24 * scaleFactor} color="white" />
-          <Text style={[styles.actionText, { marginLeft: 8 }]}>Eliminar</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  const renderRightActions = () => (
+    <View style={styles.actionContainer}>
+      <TouchableOpacity
+        onPress={() => onDelete(item.id)}
+        style={styles.deleteAction}
+      >
+        <Ionicons
+          name="trash-outline"
+          size={24 * scaleFactor}
+          color="white"
+        />
+        <Text style={[styles.actionText, { marginLeft: 8 }]}>Eliminar</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <Swipeable
       renderRightActions={renderRightActions}
-      rightThreshold={width / 4} // Makes it activate at half screen width
+      rightThreshold={width / 4}
       overshootRight={false}
       friction={2}
       enableTrackpadTwoFingerGesture
@@ -55,13 +69,16 @@ const ReminderItem: React.FC<Props> = ({ item, onPress, onDelete, onEdit }) => {
       <TouchableOpacity
         style={[baseStyles.reminderItem, { elevation: 3 }]}
         activeOpacity={0.7}
-        onPress={onPress}
+        onPress={handleOptions} // O lo que necesites
       >
         <View style={baseStyles.reminderContent}>
           <View
             style={[
               baseStyles.iconContainer,
-              { backgroundColor: item.type === 'medication' ? '#E8F5FF' : '#FFE8E8' },
+              {
+                backgroundColor:
+                  item.type === 'medication' ? '#E8F5FF' : '#FFE8E8',
+              },
             ]}
           >
             <Ionicons
@@ -71,24 +88,48 @@ const ReminderItem: React.FC<Props> = ({ item, onPress, onDelete, onEdit }) => {
             />
           </View>
           <View style={baseStyles.textContainer}>
-            <Text style={[baseStyles.reminderTitle, { fontSize: 16 * scaleFactor, fontWeight: '600' }]}>
+            <Text
+              style={[
+                baseStyles.reminderTitle,
+                { fontSize: 16 * scaleFactor, fontWeight: '600' },
+              ]}
+            >
               {item.name}
             </Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: 4,
+              }}
+            >
               <Ionicons name="time-outline" size={14 * scaleFactor} color="#666" />
-              <Text style={[baseStyles.reminderTime, { fontSize: 14 * scaleFactor, marginLeft: 4, color: '#666' }]}>
+              <Text
+                style={[
+                  baseStyles.reminderTime,
+                  { fontSize: 14 * scaleFactor, marginLeft: 4, color: '#666' },
+                ]}
+              >
                 {formatTime(item.time)}
               </Text>
-              <Text style={{ fontSize: 14 * scaleFactor, marginLeft: 8, color: '#666' }}>
+              <Text
+                style={{
+                  fontSize: 14 * scaleFactor,
+                  marginLeft: 8,
+                  color: '#666',
+                }}
+              >
                 • {item.frequency}
               </Text>
             </View>
           </View>
-          <TouchableOpacity 
-            onPress={handleOptions} 
+          <TouchableOpacity
+            onPress={handleOptions}
             style={{ justifyContent: 'center', height: '100%' }}
           >
-            <Text style={{ fontSize: 24 * scaleFactor, color: '#CCCCCC' }}>...</Text>
+            <Text style={{ fontSize: 24 * scaleFactor, color: '#CCCCCC' }}>
+              ...
+            </Text>
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -98,31 +139,23 @@ const ReminderItem: React.FC<Props> = ({ item, onPress, onDelete, onEdit }) => {
 
 const styles = StyleSheet.create({
   actionContainer: {
-    // Ocupar toda la altura del Swipeable
     height: '100%',
-    // Ajusta el ancho deseado para la zona de swipe
     width: 80,
-    // Centrar vertical/horizontal
     justifyContent: 'center',
     alignItems: 'center',
   },
   deleteAction: {
-    // Hacer que el botón ocupe todo el contenedor
     flex: 1,
     backgroundColor: '#FF4B4B',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    // Si tu ítem tiene borderRadius, puedes eliminarlo aquí o igualarlo
-    // borderRadius: 10, // quítalo o ajústalo para que se vea uniforme
   },
   actionText: {
     color: '#FFF',
     fontWeight: '500',
     fontSize: 16,
-    marginLeft: 8,
   },
 });
-
 
 export default ReminderItem;
