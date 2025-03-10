@@ -43,12 +43,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 15,
     borderRadius: 15,
-    marginBottom: 12,
+    marginBottom: 8, // reduce el espacio entre ítems
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
@@ -92,6 +89,30 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     backgroundColor: '#EDF5FF',
   },
+ parent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 15,
+    marginBottom: 20,
+  },
+  me: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  title: {
+    flex: 4,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    marginLeft: 10,
+  },
+  notificationAndAddReminder: {
+    flex: 2,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    gap: 16,
+  },
 });
-
 export default styles;

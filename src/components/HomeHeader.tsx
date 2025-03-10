@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import baseStyles from '../utils/Styles/HomeStyleSheet';
 import { HomeHeaderProps } from '../types/HomeHeaderProps.interface';
+import styles from '../utils/Styles/HomeStyleSheet';
 
 /**
  * Componente HomeHeader
@@ -17,28 +18,30 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({
   onSearchPress 
 }) => {
   return (
-    <View style={[baseStyles.header]}>
-      <Text style={[baseStyles.screenTitle]}>
-        Medical Amber
-      </Text>
-      
-      <View style={baseStyles.headerIconsContainer}>
+     <View style={styles.parent}>
+      <View style={styles.me}>
         <TouchableOpacity
-          style={[baseStyles.iconButton]}
-          onPress={onNotificationsPress}
-        >
-        <Ionicons name="notifications-outline" size={24} color="#4A90E2" />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[baseStyles.iconButton]}
+          style={styles.iconButton}
           onPress={onProfilePress}
         >
           <Ionicons name="person-outline" size={24} color="#4A90E2" />
         </TouchableOpacity>
+      </View>
+
+      <View style={styles.title}>
+        <Text style={styles.screenTitle}>Medical Amber</Text>
+      </View>
+
+      <View style={styles.notificationAndAddReminder}>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={onNotificationsPress}
+        >
+          <Ionicons name="notifications-outline" size={24} color="#4A90E2" />
+        </TouchableOpacity>
 
         <TouchableOpacity
-          style={[baseStyles.addButton]}
+          style={styles.addButton}
           onPress={onAddPress}
         >
           <Ionicons name="add" size={20} color="#FFFFFF" />

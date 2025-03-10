@@ -1,33 +1,45 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
-import Animated, { interpolate, Extrapolate } from 'react-native-reanimated';
-import { MedicineReminder, ReminderItemProps } from '../types/Reminder.interface';
+import { ReminderItemProps } from '../types/Reminder.interface';
 import baseStyles from '../utils/Styles/HomeStyleSheet';
 
 interface Props extends ReminderItemProps {
   onDelete: (id: string) => void;
+  onEdit: (id: string) => void;
+  onCheck: (id: string) => void;
 }
 
-const ReminderItem: React.FC<Props> = ({ item, onPress, onDelete }) => {
+const ReminderItem: React.FC<Props> = ({ item, onPress, onDelete, onEdit }) => {
   const { width } = useWindowDimensions();
   const scaleFactor = width / 375;
 
-  // Se define renderRightActions para eliminar el item al deslizar
-  const renderRightActions = (progress: any, dragX: any) => {
-    // Interpolamos dragX para obtener un ancho animado (este ejemplo es ilustrativo)
-    const animatedWidth = interpolate(
-      dragX,
-      [-width, 0],
-      [width, 0],
-      Extrapolate.CLAMP
+  const formatTime = (timeString: string) => {
+    const date = new Date(timeString);
+    return date.toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const handleOptions = () => {
+    Alert.alert(
+      'Opciones',
+      'Seleccione una acción',
+      [
+        { text: 'Editar', onPress: () => onEdit(item.id) },
+        { text: 'Eliminar', onPress: () => onDelete(item.id), style: 'destructive' },
+        { text: 'Cancelar', style: 'cancel' },
+      ],
+      { cancelable: true }
     );
+  };
+
+  const renderRightActions = () => {
     return (
-      <View style={styles.rightActionWrapper}>
-        <Animated.View style={[styles.background, { width: animatedWidth }]}>
-          <Text style={styles.actionText}>Eliminar</Text>
-        </Animated.View>
+      <View style={styles.actionContainer}>
+        <TouchableOpacity onPress={() => onDelete(item.id)} style={styles.deleteAction}>
+          <Ionicons name="trash-outline" size={24 * scaleFactor} color="white" />
+          <Text style={[styles.actionText, { marginLeft: 8 }]}>Eliminar</Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -35,7 +47,10 @@ const ReminderItem: React.FC<Props> = ({ item, onPress, onDelete }) => {
   return (
     <Swipeable
       renderRightActions={renderRightActions}
-      onSwipeableOpen={() => onDelete(item.id)}
+      rightThreshold={width / 4} // Makes it activate at half screen width
+      overshootRight={false}
+      friction={2}
+      enableTrackpadTwoFingerGesture
     >
       <TouchableOpacity
         style={[baseStyles.reminderItem, { elevation: 3 }]}
@@ -62,14 +77,19 @@ const ReminderItem: React.FC<Props> = ({ item, onPress, onDelete }) => {
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
               <Ionicons name="time-outline" size={14 * scaleFactor} color="#666" />
               <Text style={[baseStyles.reminderTime, { fontSize: 14 * scaleFactor, marginLeft: 4, color: '#666' }]}>
-                {item.time}
+                {formatTime(item.time)}
               </Text>
               <Text style={{ fontSize: 14 * scaleFactor, marginLeft: 8, color: '#666' }}>
                 • {item.frequency}
               </Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={24 * scaleFactor} color="#CCCCCC" />
+          <TouchableOpacity 
+            onPress={handleOptions} 
+            style={{ justifyContent: 'center', height: '100%' }}
+          >
+            <Text style={{ fontSize: 24 * scaleFactor, color: '#CCCCCC' }}>...</Text>
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     </Swipeable>
@@ -77,26 +97,32 @@ const ReminderItem: React.FC<Props> = ({ item, onPress, onDelete }) => {
 };
 
 const styles = StyleSheet.create({
-  rightActionWrapper: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    marginBottom: 12, // Para sincronizar con el marginBottom de baseStyles.reminderItem
-  },
-  background: {
-    backgroundColor: 'red',
+  actionContainer: {
+    // Ocupar toda la altura del Swipeable
     height: '100%',
+    // Ajusta el ancho deseado para la zona de swipe
+    width: 80,
+    // Centrar vertical/horizontal
     justifyContent: 'center',
     alignItems: 'center',
-    borderTopRightRadius: 15,
-    borderBottomRightRadius: 15,
+  },
+  deleteAction: {
+    // Hacer que el botón ocupe todo el contenedor
+    flex: 1,
+    backgroundColor: '#FF4B4B',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    // Si tu ítem tiene borderRadius, puedes eliminarlo aquí o igualarlo
+    // borderRadius: 10, // quítalo o ajústalo para que se vea uniforme
   },
   actionText: {
-    color: 'white',
-    fontWeight: '600',
+    color: '#FFF',
+    fontWeight: '500',
     fontSize: 16,
-    paddingHorizontal: 20,
+    marginLeft: 8,
   },
 });
+
 
 export default ReminderItem;
