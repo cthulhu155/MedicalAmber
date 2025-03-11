@@ -4,13 +4,7 @@ import ReminderItem from './ReminderItem';
 import baseStyles from '../Styles/HomeStyleSheet';
 import { HomeListProps } from '../../../../types/HomeListProps.interface';
 
-// Componente que muestra la lista de recordatorios médicos
-// Recibe como props:
-// - reminders: array de recordatorios
-// - refreshing: booleano que indica si se está actualizando la lista
-// - onRefresh: función que se ejecuta al hacer pull-to-refresh
-// - onDeleteReminder: función para eliminar un recordatorio
-const HomeList: React.FC<HomeListProps> = ({ reminders, refreshing, onRefresh, onDeleteReminder }) => {
+const HomeList: React.FC<HomeListProps> = ({ reminders, refreshing, onRefresh, onDeleteReminder, onEditReminder }) => {
   return (
     <View style={baseStyles.listContainer}>
       {reminders.length === 0 ? (
@@ -24,6 +18,7 @@ const HomeList: React.FC<HomeListProps> = ({ reminders, refreshing, onRefresh, o
             <ReminderItem
               item={item}
               onDelete={(id: string) => onDeleteReminder && onDeleteReminder(id)}
+              onEdit={(reminder) => onEditReminder(reminder)}
             />
           )}
           keyExtractor={(item) => item.id}

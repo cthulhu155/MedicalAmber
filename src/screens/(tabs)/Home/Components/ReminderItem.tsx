@@ -1,3 +1,4 @@
+// ReminderItem.tsx
 import React, { useRef } from 'react';
 import {
   View,
@@ -15,32 +16,44 @@ import baseStyles from '../Styles/HomeStyleSheet';
 interface ReminderItemProps {
   item: MedicineReminder;
   onDelete: (id: string) => void;
+  onEdit: (reminder: MedicineReminder) => void; // Nueva prop para editar
 }
 
-const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete }) => {
+const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete, onEdit }) => {
   const { width } = useWindowDimensions();
   const scaleFactor = width / 375;
   const swipeableRef = useRef<Swipeable>(null);
 
-  // Función que se encarga de eliminar y cerrar el swipeable
   const handleDelete = () => {
     onDelete(item.id);
     swipeableRef.current?.close();
   };
 
-  // Muestra un Alert con opciones al presionar el item
+  // Función que maneja la edición
+  const handleEdit = () => {
+    onEdit(item);
+    swipeableRef.current?.close();
+  };
+
+  // Muestra un Alert con opciones: Editar, Eliminar, Cancelar
   const handleOptions = () => {
     Alert.alert('Opciones', 'Seleccione una acción', [
+      {
+        text: 'Editar',
+        onPress: handleEdit,
+      },
       {
         text: 'Eliminar',
         onPress: handleDelete,
         style: 'destructive',
       },
-      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
     ]);
   };
 
-  // Formatea la hora para mostrarla en formato "hh:mm"
   const formatTime = (timeString: string) => {
     const date = new Date(timeString);
     return date.toLocaleString('es-ES', {
@@ -49,7 +62,6 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete }) => {
     });
   };
 
-  // Renderiza la acción de eliminación al hacer swipe
   const renderRightActions = () => (
     <View style={styles.actionContainer}>
       <TouchableOpacity onPress={handleDelete} style={styles.deleteAction}>
@@ -63,8 +75,6 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete }) => {
     <Swipeable
       ref={swipeableRef}
       renderRightActions={renderRightActions}
-      // Se elimina onSwipeableOpen para que el swipe solo muestre el botón
-      // onSwipeableOpen={handleDelete}
       rightThreshold={width / 4}
       overshootRight={false}
       friction={2}

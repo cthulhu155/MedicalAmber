@@ -1,6 +1,6 @@
-// screens/(tabs)/Home/Home.tsx
+// Home.tsx
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, SafeAreaView, StatusBar, Button } from 'react-native';
 import { useReminders } from '../../../hooks/useReminders';
 import { MedicineReminder } from '../../../types/Reminder.interface';
 import HomeHeader from './Components/HomeHeader';
@@ -9,23 +9,34 @@ import HomeList from './Components/HomeList';
 import baseStyles from './Styles/HomeStyleSheet';
 
 export default function HomeScreen() {
-  const { reminders, refreshing, onRefresh, addReminder, deleteReminder } = useReminders();
+  const { reminders, refreshing, onRefresh, addReminder, deleteReminder, updateReminder } = useReminders();
   const [isModalVisible, setModalVisible] = useState(false);
+  const [reminderToEdit, setReminderToEdit] = useState<MedicineReminder | undefined>(undefined);
 
+  // Función para abrir el formulario en modo edición
+  const handleEditMedicine = (reminder: MedicineReminder) => {
+    setReminderToEdit(reminder);
+    setModalVisible(true);
+  };
+
+  // Función para agregar un recordatorio nuevo
   const handleAddMedicine = (newMedicine: MedicineReminder) => {
-    // Agregamos el nuevo recordatorio usando el hook
-    addReminder({ ...newMedicine, type: 'medication' });
+    // Si viene en modo edición, se actualiza en Firebase y en el estado local
+    if (reminderToEdit) {
+      updateReminder(reminderToEdit.id, newMedicine);
+    } else {
+      addReminder({ ...newMedicine, type: 'medication' });
+    }
     setModalVisible(false);
+    setReminderToEdit(undefined);
   };
 
   return (
     <SafeAreaView style={[baseStyles.safeArea, { backgroundColor: '#F8F9FA' }]}>
       <StatusBar barStyle="dark-content" backgroundColor="#F8F9FA" />
 
-      {/* Encabezado con botón para abrir el modal de añadir medicamento */}
-      <HomeHeader onAddPress={() => setModalVisible(true)} />
+      <HomeHeader onAddPress={() => { setModalVisible(true); setReminderToEdit(undefined); }} />
 
-      {/* Alerta / aviso */}
       <View
         style={[
           baseStyles.warningContainer,
@@ -46,19 +57,22 @@ export default function HomeScreen() {
         </Text>
       </View>
 
-      {/* Se pasa deleteReminder como onDeleteReminder */}
       <HomeList
         reminders={reminders}
         refreshing={refreshing}
         onRefresh={onRefresh}
         onDeleteReminder={deleteReminder}
+        onEditReminder={handleEditMedicine} 
       />
 
-      {/* Modal para añadir un nuevo recordatorio */}
       <AddMedicineForm
         visible={isModalVisible}
         onAdd={handleAddMedicine}
-        onClose={() => setModalVisible(false)}
+        onClose={() => {
+          setModalVisible(false);
+          setReminderToEdit(undefined);
+        }}
+        reminderToEdit={reminderToEdit}  // Se pasa el recordatorio a editar (si existe)
       />
     </SafeAreaView>
   );

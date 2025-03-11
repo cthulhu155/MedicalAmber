@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   View, Text, TextInput, TouchableOpacity, Modal, Alert, 
   KeyboardAvoidingView, Platform, ScrollView 
 } from "react-native";
 import { Calendar } from "react-native-calendars";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import styles from "../../../../utils/Styles/AddRemindersStyleSheet";
 import { MedicineReminder } from "../../../../types/Reminder.interface";
 import { AddMedicineFormProps } from "../../../../types/AddMedicineFormProps.interface";
@@ -13,7 +14,7 @@ const INITIAL_MEDICINE_REMINDER: Omit<MedicineReminder, 'id'> & Partial<Pick<Med
   dosage: "",
   time: new Date().toISOString(),
   frequency: "1",
-  type: "medication" as "medication", // Aseguramos el literal "medication"
+  type: "medication" as "medication",
   notes: "",
   pillQuantity: "",
   intervalHours: "",
@@ -21,12 +22,40 @@ const INITIAL_MEDICINE_REMINDER: Omit<MedicineReminder, 'id'> & Partial<Pick<Med
   isRecurring: false,
 };
 
-export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicineFormProps) {
-  const [newMedicine, setNewMedicine] = useState(INITIAL_MEDICINE_REMINDER);
-  const [isRecurring, setIsRecurring] = useState(false);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [selectedDates, setSelectedDates] = useState({});
+export default function AddMedicineForm({ visible, onAdd, onUpdate, onClose, reminderToEdit }: AddMedicineFormProps) {
+  // Si existe reminderToEdit, inicializamos el estado con él; si no, usamos el valor por defecto.
+  const [newMedicine, setNewMedicine] = useState<MedicineReminder>(
+    reminderToEdit ? reminderToEdit : { ...INITIAL_MEDICINE_REMINDER, id: '' }
+  );
+  const [isRecurring, setIsRecurring] = useState(reminderToEdit ? reminderToEdit.isRecurring : false);
+  const [startDate, setStartDate] = useState(reminderToEdit ? reminderToEdit.startDate || '' : '');
+  const [endDate, setEndDate] = useState(reminderToEdit ? reminderToEdit.endDate || '' : '');
+  const [selectedDates, setSelectedDates] = useState(
+    reminderToEdit && reminderToEdit.selectedDates ? reminderToEdit.selectedDates : {}
+  );
+
+  // Estados para la hora
+  const [time, setTime] = useState(new Date(newMedicine.time));
+  const [showTimePicker, setShowTimePicker] = useState(false);
+
+  // Actualizamos el estado si cambia reminderToEdit
+  useEffect(() => {
+    if (reminderToEdit) {
+      setNewMedicine(reminderToEdit);
+      setIsRecurring(reminderToEdit.isRecurring);
+      setStartDate(reminderToEdit.startDate || '');
+      setEndDate(reminderToEdit.endDate || '');
+      setSelectedDates(reminderToEdit.selectedDates || {});
+      setTime(new Date(reminderToEdit.time));
+    } else {
+      setNewMedicine({ ...INITIAL_MEDICINE_REMINDER, id: '' });
+      setIsRecurring(false);
+      setStartDate('');
+      setEndDate('');
+      setSelectedDates({});
+      setTime(new Date());
+    }
+  }, [reminderToEdit]);
 
   const handleInputChange = (field: string, value: string) => {
     setNewMedicine((prev) => ({ ...prev, [field]: value }));
@@ -43,7 +72,7 @@ export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicine
     } else {
       const start = new Date(startDate);
       const end = new Date(day.dateString);
-      
+
       if (end < start) {
         setStartDate(day.dateString);
         setEndDate('');
@@ -54,39 +83,61 @@ export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicine
       }
 
       setEndDate(day.dateString);
-      
+
       const dates: Record<string, { selected: boolean; marked: boolean }> = {};
       let currentDate = new Date(start);
-      
+
       while (currentDate <= end) {
         const dateString = currentDate.toISOString().split('T')[0];
         dates[dateString] = { selected: true, marked: true };
         currentDate.setDate(currentDate.getDate() + 1);
       }
-      
+
       setSelectedDates(dates);
     }
   };
 
-  const handleAddMedicine = () => {
+  // Manejar cambios de hora
+  const handleTimeChange = (event: any, selectedTime?: Date) => {
+    setShowTimePicker(false);
+    if (selectedTime) {
+      setTime(selectedTime);
+      setNewMedicine((prev) => ({
+        ...prev,
+        time: selectedTime.toISOString(),
+      }));
+    }
+  };
+
+  // Función para confirmar la acción (agregar o actualizar)
+  const handleConfirm = () => {
     if (!newMedicine.name.trim() || !newMedicine.dosage.trim()) {
       Alert.alert("Error", "Todos los campos deben estar completos");
       return;
     }
-    const reminder = {
+
+    const reminder: MedicineReminder = {
       ...newMedicine,
-      id: Date.now().toString(),
+      id: reminderToEdit ? newMedicine.id : Date.now().toString(),
       isRecurring,
       selectedDates: isRecurring ? selectedDates : null,
       startDate,
       endDate,
     };
-    onAdd(reminder);
-    setNewMedicine(INITIAL_MEDICINE_REMINDER);
+
+    if (reminderToEdit && onUpdate) {
+      onUpdate(reminder);
+    } else {
+      onAdd(reminder);
+    }
+
+    // Reiniciamos los estados
+    setNewMedicine({ ...INITIAL_MEDICINE_REMINDER, id: '' });
     setIsRecurring(false);
     setSelectedDates({});
     setStartDate('');
     setEndDate('');
+    setTime(new Date());
     onClose();
   };
 
@@ -99,7 +150,7 @@ export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicine
       >
         <ScrollView contentContainerStyle={styles.modalContent}>
           <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>
-            Añadir Nuevo Recordatorio
+            {reminderToEdit ? "Editar Recordatorio" : "Añadir Nuevo Recordatorio"}
           </Text>
 
           <Text>Nombre:</Text>
@@ -147,8 +198,8 @@ export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicine
             />
           </View>
 
-          <View>
-            <Text style={{ marginTop: 10 }}>Selecciona rango de fechas:</Text>
+          <View style={{ marginTop: 10 }}>
+            <Text>Selecciona rango de fechas:</Text>
             <Text style={{ fontSize: 12, color: '#666' }}>
               {startDate ? `Inicio: ${startDate}` : 'Selecciona fecha inicial'}
               {endDate ? ` - Fin: ${endDate}` : ''}
@@ -160,8 +211,29 @@ export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicine
             />
           </View>
 
-          <TouchableOpacity style={styles.confirmButton} onPress={handleAddMedicine}>
-            <Text style={styles.confirmText}>Añadir Recordatorio</Text>
+          <View style={{ marginTop: 10 }}>
+            <Text>Seleccionar hora de inicio:</Text>
+            <TouchableOpacity
+              style={[styles.input, { justifyContent: 'center' }]}
+              onPress={() => setShowTimePicker(true)}
+            >
+              <Text>{new Date(newMedicine.time).toLocaleTimeString()}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {showTimePicker && (
+            <DateTimePicker
+              value={time}
+              mode="time"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              onChange={handleTimeChange}
+            />
+          )}
+
+          <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
+            <Text style={styles.confirmText}>
+              {reminderToEdit ? "Actualizar Recordatorio" : "Añadir Recordatorio"}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
