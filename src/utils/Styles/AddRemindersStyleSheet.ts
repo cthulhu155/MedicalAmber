@@ -54,8 +54,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    width: "90%",
-    alignItems: "center",
+    width: "100%",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
@@ -94,17 +93,24 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "#333",
     borderRadius: 5,
+    alignItems: "center",
   },
   closeText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    alignContent: "center",
   },
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  keyboardcontainer:{
+    flex: 1,
+    padding: 10,
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
 });
 

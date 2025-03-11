@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Modal, Alert } from "react-native";
+import { 
+  View, Text, TextInput, TouchableOpacity, Modal, Alert, 
+  KeyboardAvoidingView, Platform, ScrollView 
+} from "react-native";
 import { Calendar } from "react-native-calendars";
 import styles from "../../../../utils/Styles/AddRemindersStyleSheet";
 import { MedicineReminder } from "../../../../types/Reminder.interface";
@@ -10,10 +13,10 @@ const INITIAL_MEDICINE_REMINDER: Omit<MedicineReminder, 'id'> & Partial<Pick<Med
   dosage: "",
   time: new Date().toISOString(),
   frequency: "1",
-  type: "medication",
-  notes: "",             // Se agrega la propiedad 'notes'
-  pillQuantity: "",      // Nuevo campo para la cantidad de pastillas
-  intervalHours: "",     // Nuevo campo para cada cuántas horas se debe tomar
+  type: "medication" as "medication", // Aseguramos el literal "medication"
+  notes: "",
+  pillQuantity: "",
+  intervalHours: "",
   reminderSound: "default",
   isRecurring: false,
 };
@@ -23,23 +26,21 @@ export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicine
   const [isRecurring, setIsRecurring] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [selectedDates, setSelectedDates] = useState<Record<string, { selected: boolean; marked: boolean }>>({});
+  const [selectedDates, setSelectedDates] = useState({});
 
   const handleInputChange = (field: string, value: string) => {
     setNewMedicine((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Handle calendar date selection
+  // Maneja la selección de fechas en el calendario
   const handleDayPress = (day: { dateString: string }) => {
     if (!startDate || (startDate && endDate)) {
-      // Start new selection
       setStartDate(day.dateString);
       setEndDate('');
       setSelectedDates({
         [day.dateString]: { selected: true, marked: true }
       });
     } else {
-      // Complete the range selection
       const start = new Date(startDate);
       const end = new Date(day.dateString);
       
@@ -54,7 +55,6 @@ export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicine
 
       setEndDate(day.dateString);
       
-      // Generate dates between start and end
       const dates: Record<string, { selected: boolean; marked: boolean }> = {};
       let currentDate = new Date(start);
       
@@ -92,9 +92,15 @@ export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicine
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>Añadir Nuevo Recordatorio</Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardcontainer}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+      >
+        <ScrollView contentContainerStyle={styles.modalContent}>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>
+            Añadir Nuevo Recordatorio
+          </Text>
 
           <Text>Nombre:</Text>
           <TextInput
@@ -112,7 +118,9 @@ export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicine
             onChangeText={(text) => handleInputChange("dosage", text)}
           />
 
-          <Text style={{ marginTop: 10 }}>Cantidad de pastillas y cada cuántas horas:</Text>
+          <Text style={{ marginTop: 10 }}>
+            Cantidad de pastillas y cada cuántas horas:
+          </Text>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <TextInput
               style={[styles.input, { flex: 1, marginRight: 5 }]}
@@ -125,7 +133,7 @@ export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicine
               }}
               maxLength={3}
             />
-            <Text>X.</Text>
+            <Text>X</Text>
             <TextInput
               style={[styles.input, { flex: 1, marginLeft: 5 }]}
               placeholder="Cada cuántas horas"
@@ -159,8 +167,8 @@ export default function AddMedicineForm({ visible, onAdd, onClose }: AddMedicine
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeText}>Cancelar</Text>
           </TouchableOpacity>
-        </View>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
