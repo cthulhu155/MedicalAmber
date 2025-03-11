@@ -1,4 +1,3 @@
-// Home.tsx
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, StatusBar, Button } from 'react-native';
 import { useReminders } from '../../../hooks/useReminders';
@@ -7,35 +6,84 @@ import HomeHeader from './Components/HomeHeader';
 import AddMedicineForm from './Components/AddMedicine';
 import HomeList from './Components/HomeList';
 import baseStyles from './Styles/HomeStyleSheet';
+import { scheduleOneTimeNotification } from '../../../utils/config/NotificationService';
+import * as Notifications from 'expo-notifications';
 
 export default function HomeScreen() {
-  const { reminders, refreshing, onRefresh, addReminder, deleteReminder, updateReminder } = useReminders();
+  const {
+    reminders,
+    refreshing,
+    onRefresh,
+    addReminder,
+    deleteReminder,
+    updateReminder,
+    updateReminderTime,
+  } = useReminders();
   const [isModalVisible, setModalVisible] = useState(false);
   const [reminderToEdit, setReminderToEdit] = useState<MedicineReminder | undefined>(undefined);
 
-  // Función para abrir el formulario en modo edición
+  // Abre el formulario para editar
   const handleEditMedicine = (reminder: MedicineReminder) => {
     setReminderToEdit(reminder);
     setModalVisible(true);
   };
 
-  // Función para agregar un recordatorio nuevo
-  const handleAddMedicine = (newMedicine: MedicineReminder) => {
-    // Si viene en modo edición, se actualiza en Firebase y en el estado local
+  // Agrega o actualiza el recordatorio y programa la notificación
+  const handleAddMedicine = async (newMedicine: MedicineReminder) => {
+    let reminderId: string = '';
+    
     if (reminderToEdit) {
-      updateReminder(reminderToEdit.id, newMedicine);
+      await updateReminder(reminderToEdit.id, newMedicine);
+      reminderId = reminderToEdit.id;
     } else {
-      addReminder({ ...newMedicine, type: 'medication' });
+      await addReminder({ ...newMedicine, type: 'medication' });
+      // Se busca el recordatorio recién agregado; idealmente, addReminder debería retornar el id.
+      const addedReminder = reminders.find(
+        (r) =>
+          r.name === newMedicine.name &&
+          r.time === newMedicine.time &&
+          r.dosage === newMedicine.dosage
+      );
+      reminderId = addedReminder ? addedReminder.id : '';
     }
+
     setModalVisible(false);
     setReminderToEdit(undefined);
+
+    const reminderDate = new Date(newMedicine.time);
+    const intervalHours = parseInt(newMedicine.intervalHours || '0', 10);
+
+    // Programa la notificación y obtiene el notificationId
+    const notificationId = await scheduleOneTimeNotification(
+      'Recordatorio de medicamento',
+      `Es hora de tomar ${newMedicine.name} (${newMedicine.dosage}).`,
+      reminderDate,
+      reminderId,
+      intervalHours
+    );
+
+    // Actualiza el recordatorio para guardar el notificationId
+    if (reminderId) {
+      await updateReminderTime(reminderId, newMedicine.time, notificationId);
+    }
+  };
+
+  // Función para cancelar todas las notificaciones programadas
+  const clearNotifications = async () => {
+    await Notifications.cancelAllScheduledNotificationsAsync();
+    console.log("Todas las notificaciones han sido canceladas");
   };
 
   return (
     <SafeAreaView style={[baseStyles.safeArea, { backgroundColor: '#F8F9FA' }]}>
       <StatusBar barStyle="dark-content" backgroundColor="#F8F9FA" />
 
-      <HomeHeader onAddPress={() => { setModalVisible(true); setReminderToEdit(undefined); }} />
+      <HomeHeader
+        onAddPress={() => {
+          setModalVisible(true);
+          setReminderToEdit(undefined);
+        }}
+      />
 
       <View
         style={[
@@ -62,7 +110,7 @@ export default function HomeScreen() {
         refreshing={refreshing}
         onRefresh={onRefresh}
         onDeleteReminder={deleteReminder}
-        onEditReminder={handleEditMedicine} 
+        onEditReminder={handleEditMedicine}
       />
 
       <AddMedicineForm
@@ -72,8 +120,12 @@ export default function HomeScreen() {
           setModalVisible(false);
           setReminderToEdit(undefined);
         }}
-        reminderToEdit={reminderToEdit}  // Se pasa el recordatorio a editar (si existe)
+        reminderToEdit={reminderToEdit}
       />
+
+      <View style={{ margin: 20 }}>
+        <Button title="Cancelar todas las notificaciones" onPress={clearNotifications} />
+      </View>
     </SafeAreaView>
   );
 }

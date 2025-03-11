@@ -10,9 +10,9 @@ export interface MedicineReminder {
   isRecurring: boolean;
   pillQuantity?: string;   // Cantidad de pastillas
   intervalHours?: string;  // Cada cuántas horas se debe tomar
-
   // Propiedades opcionales para rangos de fechas en modo recurrente:
   startDate?: string;
   endDate?: string;
   selectedDates?: Record<string, { selected: boolean; marked: boolean }> | null;
+  notificationId?: string;
 }

@@ -1,10 +1,13 @@
+// src/hooks/useReminders.ts
 import { useState, useCallback, useEffect } from 'react';
 import { MedicineReminder } from '../types/Reminder.interface';
 import { auth } from '../utils/config/firebase.config';
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import * as Notifications from 'expo-notifications';
 
 export const useReminders = () => {
-  const [reminders, setReminders] = useState<MedicineReminder[]>([]);
+  // Usamos un arreglo extendido que puede incluir notificationId
+  const [reminders, setReminders] = useState<(MedicineReminder & { notificationId?: string })[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const db = getFirestore();
@@ -20,8 +23,8 @@ export const useReminders = () => {
       const querySnapshot = await getDocs(collection(db, `users/${userId}/reminders`));
       const fetchedReminders = querySnapshot.docs.map(doc => ({
         ...doc.data(),
-        id: doc.id  // Se asegura que el id del documento sobrescriba cualquier id en los datos
-      })) as MedicineReminder[];
+        id: doc.id,
+      })) as (MedicineReminder & { notificationId?: string })[];
       setReminders(fetchedReminders);
     } catch (error) {
       console.error('Error fetching reminders:', error);
@@ -34,7 +37,8 @@ export const useReminders = () => {
     fetchReminders();
   }, [fetchReminders]);
 
-  const addReminder = async (newReminder: Omit<MedicineReminder, 'id'>) => {
+  // Al agregar se puede incluir notificationId opcional
+  const addReminder = async (newReminder: Omit<MedicineReminder, 'id'> & { notificationId?: string }) => {
     try {
       const userId = auth.currentUser?.uid;
       if (!userId) {
@@ -48,6 +52,7 @@ export const useReminders = () => {
     }
   };
 
+  // Al eliminar, se cancela la notificación pendiente si existe notificationId
   const deleteReminder = async (id: string) => {
     try {
       const userId = auth.currentUser?.uid;
@@ -55,7 +60,12 @@ export const useReminders = () => {
         console.error("Usuario no autenticado");
         return;
       }
-      console.log("Intentando eliminar recordatorio:", id, "para el UID:", userId);
+      const reminderToDelete = reminders.find(reminder => reminder.id === id);
+      if (reminderToDelete?.notificationId) {
+        console.log("Cancelando notificación con ID:", reminderToDelete.notificationId);
+        await Notifications.cancelScheduledNotificationAsync(reminderToDelete.notificationId);
+        console.log("Notificación cancelada");
+      }
       await deleteDoc(doc(db, `users/${userId}/reminders/${id}`));
       setReminders(prev => prev.filter(reminder => reminder.id !== id));
       console.log("Recordatorio eliminado de Firebase.");
@@ -64,7 +74,10 @@ export const useReminders = () => {
     }
   };
 
-  const updateReminder = async (id: string, updatedData: Partial<MedicineReminder>) => {
+  const updateReminder = async (
+    id: string,
+    updatedData: Partial<MedicineReminder> & { notificationId?: string }
+  ) => {
     try {
       const userId = auth.currentUser?.uid;
       if (!userId) return;
@@ -76,6 +89,30 @@ export const useReminders = () => {
       );
     } catch (error) {
       console.error('Error updating reminder:', error);
+    }
+  };
+
+  // Función para actualizar la hora y opcionalmente el notificationId del recordatorio
+  const updateReminderTime = async (
+    id: string,
+    newTime: string,
+    newNotificationId?: string
+  ) => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) return;
+      const updateData: Partial<MedicineReminder> & { notificationId?: string } = { time: newTime };
+      if (newNotificationId) {
+        updateData.notificationId = newNotificationId;
+      }
+      await updateDoc(doc(db, `users/${userId}/reminders/${id}`), updateData);
+      setReminders(prev =>
+        prev.map(reminder =>
+          reminder.id === id ? { ...reminder, ...updateData } : reminder
+        )
+      );
+    } catch (error) {
+      console.error('Error updating reminder time:', error);
     }
   };
 
@@ -94,5 +131,6 @@ export const useReminders = () => {
     deleteReminder,
     updateReminder,
     fetchReminders,
+    updateReminderTime,
   };
 };
