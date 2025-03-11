@@ -25,7 +25,7 @@ export default function HomeScreen() {
       {/* Encabezado con botón para abrir el modal de añadir medicamento */}
       <HomeHeader onAddPress={() => setModalVisible(true)} />
 
-      {/* Alerta / aviso (puede moverse a un componente aparte si prefieres) */}
+      {/* Alerta / aviso */}
       <View
         style={[
           baseStyles.warningContainer,
@@ -46,14 +46,15 @@ export default function HomeScreen() {
         </Text>
       </View>
 
-      {/* Componente presentacional que muestra la lista de recordatorios */}
+      {/* Se pasa deleteReminder como onDeleteReminder */}
       <HomeList
         reminders={reminders}
         refreshing={refreshing}
         onRefresh={onRefresh}
+        onDeleteReminder={deleteReminder}
       />
 
-      {/* Modal para añadir un nuevo recordatorio de medicamento */}
+      {/* Modal para añadir un nuevo recordatorio */}
       <AddMedicineForm
         visible={isModalVisible}
         onAdd={handleAddMedicine}

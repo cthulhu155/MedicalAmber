@@ -63,7 +63,8 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete }) => {
     <Swipeable
       ref={swipeableRef}
       renderRightActions={renderRightActions}
-      onSwipeableOpen={handleDelete}
+      // Se elimina onSwipeableOpen para que el swipe solo muestre el botón
+      // onSwipeableOpen={handleDelete}
       rightThreshold={width / 4}
       overshootRight={false}
       friction={2}
