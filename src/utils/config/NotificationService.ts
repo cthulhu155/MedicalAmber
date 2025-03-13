@@ -18,6 +18,9 @@ export async function scheduleOneTimeNotification(
     date = new Date(now + 5000);
   }
 
+  // Log para verificar que se programa con un reminderId válido
+  console.log("Programando notificación para reminderId:", reminderId, "con intervalHours:", intervalHours, "en fecha:", date.toISOString());
+
   const notificationId = await Notifications.scheduleNotificationAsync({
     content: {
       title,

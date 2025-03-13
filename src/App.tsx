@@ -41,7 +41,7 @@ function Navigation() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#6C63FF" />
       </View>
     );
@@ -66,10 +66,15 @@ function Navigation() {
 
 // Componente para manejar los listeners de notificaciones y reprogamar la siguiente notificación
 function AppContent() {
-  // Extraemos 'reminders' y 'updateReminderTime' de nuestro hook useReminders
-  const { reminders, updateReminderTime } = useReminders();
-  const notificationListener = useRef<any>();
-  const responseListener = useRef<any>();
+  const { reminders, updateReminderTime, fetchReminders } = useReminders();
+  const notificationListener = useRef<Notifications.Subscription | null>(null);
+  const responseListener = useRef<Notifications.Subscription | null>(null);
+
+  // Usamos un ref para mantener actualizado el estado de los recordatorios
+  const remindersRef = useRef(reminders);
+  useEffect(() => {
+    remindersRef.current = reminders;
+  }, [reminders]);
 
   useEffect(() => {
     const registerForPushNotificationsAsync = async () => {
@@ -99,14 +104,25 @@ function AppContent() {
     notificationListener.current = Notifications.addNotificationReceivedListener(
       async (notification) => {
         console.log("Notificación recibida:", notification);
+        // Mostramos la data completa para verificar su contenido
+        console.log("Contenido data:", JSON.stringify(notification.request.content.data));
 
         // Extrae la data de la notificación
         const data = notification.request.content.data;
         const intervalHours = data.intervalHours || 0;
         const reminderId = data.reminderId || "";
 
-        // Verifica que el recordatorio aún exista en el estado
-        const reminderExists = reminders.find((r) => r.id === reminderId);
+        // Forzamos la actualización de recordatorios para obtener el estado más reciente
+        await fetchReminders();
+        // Espera breve para que el estado se actualice (ajustamos a 500ms)
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        // Imprime los IDs actuales de recordatorios y el reminderId recibido
+        console.log("Reminders en estado:", remindersRef.current.map((r) => r.id));
+        console.log("reminderId recibido:", reminderId);
+
+        // Verifica que el recordatorio aún exista usando el ref actualizado
+        const reminderExists = remindersRef.current.find((r) => r.id === reminderId);
         if (!reminderExists) {
           console.log("El recordatorio fue eliminado; no se reprogra notificación");
           return;
@@ -128,6 +144,7 @@ function AppContent() {
 
           // Actualiza el recordatorio en la BD y en el estado local
           await updateReminderTime(reminderId, nextDate.toISOString(), newNotificationId);
+          console.log(`Recordatorio ${reminderId} actualizado para la siguiente toma`);
         }
       }
     );
@@ -136,7 +153,6 @@ function AppContent() {
     responseListener.current = Notifications.addNotificationResponseReceivedListener(
       (response) => {
         console.log("Respuesta a la notificación:", response);
-        // Aquí podrías navegar a una pantalla de detalles, etc.
       }
     );
 
@@ -148,7 +164,7 @@ function AppContent() {
         Notifications.removeNotificationSubscription(responseListener.current);
       }
     };
-  }, [reminders, updateReminderTime]);
+  }, [fetchReminders, updateReminderTime]);
 
   return null;
 }

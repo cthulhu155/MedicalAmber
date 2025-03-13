@@ -1,12 +1,14 @@
 // src/hooks/useReminders.ts
 import { useState, useCallback, useEffect } from 'react';
 import { MedicineReminder } from '../types/Reminder.interface';
-import { auth } from '../utils/config/firebase.config';
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import * as Notifications from 'expo-notifications';
+import { useAuth } from './useAuth';
 
 export const useReminders = () => {
-  // Usamos un arreglo extendido que puede incluir notificationId
+  const { user } = useAuth();
+  const userId = user?.uid;
+
   const [reminders, setReminders] = useState<(MedicineReminder & { notificationId?: string })[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -15,9 +17,9 @@ export const useReminders = () => {
   const fetchReminders = useCallback(async () => {
     setLoading(true);
     try {
-      const userId = auth.currentUser?.uid;
       if (!userId) {
         console.error("Usuario no autenticado");
+        setReminders([]);
         return;
       }
       const querySnapshot = await getDocs(collection(db, `users/${userId}/reminders`));
@@ -31,31 +33,33 @@ export const useReminders = () => {
     } finally {
       setLoading(false);
     }
-  }, [db]);
+  }, [db, userId]);
 
   useEffect(() => {
     fetchReminders();
   }, [fetchReminders]);
 
-  // Al agregar se puede incluir notificationId opcional
-  const addReminder = async (newReminder: Omit<MedicineReminder, 'id'> & { notificationId?: string }) => {
+  // Modificamos addReminder para que retorne el id del recordatorio creado
+  const addReminder = async (
+    newReminder: Omit<MedicineReminder, 'id'> & { notificationId?: string }
+  ): Promise<string | null> => {
     try {
-      const userId = auth.currentUser?.uid;
       if (!userId) {
         console.error("Usuario no autenticado");
-        return;
+        return null;
       }
       const docRef = await addDoc(collection(db, `users/${userId}/reminders`), newReminder);
-      setReminders(prev => [...prev, { ...newReminder, id: docRef.id }]);
+      const newId = docRef.id;
+      setReminders(prev => [...prev, { ...newReminder, id: newId }]);
+      return newId;
     } catch (error) {
       console.error('Error adding reminder:', error);
+      return null;
     }
   };
 
-  // Al eliminar, se cancela la notificación pendiente si existe notificationId
   const deleteReminder = async (id: string) => {
     try {
-      const userId = auth.currentUser?.uid;
       if (!userId) {
         console.error("Usuario no autenticado");
         return;
@@ -79,7 +83,6 @@ export const useReminders = () => {
     updatedData: Partial<MedicineReminder> & { notificationId?: string }
   ) => {
     try {
-      const userId = auth.currentUser?.uid;
       if (!userId) return;
       await updateDoc(doc(db, `users/${userId}/reminders/${id}`), updatedData);
       setReminders(prev =>
@@ -92,14 +95,12 @@ export const useReminders = () => {
     }
   };
 
-  // Función para actualizar la hora y opcionalmente el notificationId del recordatorio
   const updateReminderTime = async (
     id: string,
     newTime: string,
     newNotificationId?: string
   ) => {
     try {
-      const userId = auth.currentUser?.uid;
       if (!userId) return;
       const updateData: Partial<MedicineReminder> & { notificationId?: string } = { time: newTime };
       if (newNotificationId) {

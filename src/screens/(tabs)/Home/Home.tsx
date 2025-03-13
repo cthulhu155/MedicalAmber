@@ -1,5 +1,6 @@
+// src/screens/(tabs)/Home/Home.tsx
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, StatusBar, Button } from 'react-native';
+import { View, Text, SafeAreaView, StatusBar, Button, Alert } from 'react-native';
 import { useReminders } from '../../../hooks/useReminders';
 import { MedicineReminder } from '../../../types/Reminder.interface';
 import HomeHeader from './Components/HomeHeader';
@@ -30,21 +31,19 @@ export default function HomeScreen() {
 
   // Agrega o actualiza el recordatorio y programa la notificación
   const handleAddMedicine = async (newMedicine: MedicineReminder) => {
-    let reminderId: string = '';
+    let reminderId: string | null = null;
     
     if (reminderToEdit) {
       await updateReminder(reminderToEdit.id, newMedicine);
       reminderId = reminderToEdit.id;
     } else {
-      await addReminder({ ...newMedicine, type: 'medication' });
-      // Se busca el recordatorio recién agregado; idealmente, addReminder debería retornar el id.
-      const addedReminder = reminders.find(
-        (r) =>
-          r.name === newMedicine.name &&
-          r.time === newMedicine.time &&
-          r.dosage === newMedicine.dosage
-      );
-      reminderId = addedReminder ? addedReminder.id : '';
+      // Usamos el nuevo addReminder que retorna el id del recordatorio creado.
+      reminderId = await addReminder({ ...newMedicine, type: 'medication' });
+    }
+
+    if (!reminderId) {
+      Alert.alert("Error", "No se pudo obtener el ID del recordatorio");
+      return;
     }
 
     setModalVisible(false);
