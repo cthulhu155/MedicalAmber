@@ -99,7 +99,7 @@ export default function AddMedicineForm({ visible, onAdd, onUpdate, onClose, rem
 
   // Manejar cambios de hora
   const handleTimeChange = (event: any, selectedTime?: Date) => {
-    setShowTimePicker(false);
+    setShowTimePicker(Platform.OS === 'ios');
     if (selectedTime) {
       setTime(selectedTime);
       setNewMedicine((prev) => ({
@@ -225,7 +225,7 @@ export default function AddMedicineForm({ visible, onAdd, onUpdate, onClose, rem
             <DateTimePicker
               value={time}
               mode="time"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              display={'default'}
               onChange={handleTimeChange}
             />
           )}
