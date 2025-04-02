@@ -15,13 +15,14 @@ export const useReminders = () => {
   const db = getFirestore();
 
   const fetchReminders = useCallback(async () => {
+    // Si no hay usuario, no intentamos hacer la petición
+    if (!userId) {
+      
+      return;
+    }
+
     setLoading(true);
     try {
-      if (!userId) {
-        console.error("Usuario no autenticado");
-        setReminders([]);
-        return;
-      }
       const querySnapshot = await getDocs(collection(db, `users/${userId}/reminders`));
       const fetchedReminders = querySnapshot.docs.map(doc => ({
         ...doc.data(),
@@ -30,6 +31,7 @@ export const useReminders = () => {
       setReminders(fetchedReminders);
     } catch (error) {
       console.error('Error fetching reminders:', error);
+      setReminders([]);
     } finally {
       setLoading(false);
     }
@@ -39,15 +41,15 @@ export const useReminders = () => {
     fetchReminders();
   }, [fetchReminders]);
 
-  // Modificamos addReminder para que retorne el id del recordatorio creado
   const addReminder = async (
     newReminder: Omit<MedicineReminder, 'id'> & { notificationId?: string }
   ): Promise<string | null> => {
+    if (!userId) {
+      console.error("Usuario no autenticado");
+      return null;
+    }
+
     try {
-      if (!userId) {
-        console.error("Usuario no autenticado");
-        return null;
-      }
       const docRef = await addDoc(collection(db, `users/${userId}/reminders`), newReminder);
       const newId = docRef.id;
       setReminders(prev => [...prev, { ...newReminder, id: newId }]);
@@ -59,11 +61,12 @@ export const useReminders = () => {
   };
 
   const deleteReminder = async (id: string) => {
+    if (!userId) {
+      console.error("Usuario no autenticado");
+      return;
+    }
+
     try {
-      if (!userId) {
-        console.error("Usuario no autenticado");
-        return;
-      }
       const reminderToDelete = reminders.find(reminder => reminder.id === id);
       if (reminderToDelete?.notificationId) {
         console.log("Cancelando notificación con ID:", reminderToDelete.notificationId);
@@ -82,8 +85,12 @@ export const useReminders = () => {
     id: string,
     updatedData: Partial<MedicineReminder> & { notificationId?: string }
   ) => {
+    if (!userId) {
+      console.error("Usuario no autenticado");
+      return;
+    }
+
     try {
-      if (!userId) return;
       await updateDoc(doc(db, `users/${userId}/reminders/${id}`), updatedData);
       setReminders(prev =>
         prev.map(reminder =>
@@ -100,8 +107,12 @@ export const useReminders = () => {
     newTime: string,
     newNotificationId?: string
   ) => {
+    if (!userId) {
+      console.error("Usuario no autenticado");
+      return;
+    }
+
     try {
-      if (!userId) return;
       const updateData: Partial<MedicineReminder> & { notificationId?: string } = { time: newTime };
       if (newNotificationId) {
         updateData.notificationId = newNotificationId;

@@ -78,7 +78,7 @@ export default function Login({ navigation }: LoginProps) {
                 transform: [{ translateY: -12 }],
                 justifyContent: 'center',
                 alignItems: 'center',
-                height: 24 // Added fixed height to help with centering
+                height: 24
               }}
               onPress={() => setShowPassword(!showPassword)}
             >
