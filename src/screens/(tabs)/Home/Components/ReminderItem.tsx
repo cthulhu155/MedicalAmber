@@ -6,9 +6,10 @@ import {
   StyleSheet,
   useWindowDimensions,
   Alert,
+  Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Swipeable } from 'react-native-gesture-handler';
+import { Swipeable, RectButton } from 'react-native-gesture-handler';
 import { MedicineReminder } from '../../../../types/Reminder.interface';
 import baseStyles from '../Styles/HomeStyleSheet';
 
@@ -61,14 +62,52 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete, onEdit }) =
     });
   };
 
-  const renderRightActions = () => (
-    <View style={styles.actionContainer}>
-      <TouchableOpacity onPress={handleDelete} style={styles.deleteAction}>
-        <Ionicons name="trash-outline" size={24 * scaleFactor} color="white" />
-        <Text style={[styles.actionText, { marginLeft: 8 }]}>Eliminar</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  // Función para determinar el color de la tarjeta según el tipo
+  const getCardStyle = () => {
+    if (item.type === 'medication') {
+      return {
+        borderLeftColor: '#3A7BD5',
+        iconBg: '#E8F5FF',
+        iconColor: '#3A7BD5'
+      };
+    } else {
+      return {
+        borderLeftColor: '#FF4B4B',
+        iconBg: '#FFE8E8',
+        iconColor: '#FF4B4B'
+      };
+    }
+  };
+
+  const cardStyle = getCardStyle();
+
+  const renderRightActions = (progress: Animated.AnimatedInterpolation<number>, dragX: Animated.AnimatedInterpolation<number>) => {
+    const trans = dragX.interpolate({
+      inputRange: [-100, 0],
+      outputRange: [0, 100],
+      extrapolate: 'clamp',
+    });
+    
+    return (
+      <View style={[styles.actionContainer, { borderRadius: 18 }]}>
+        <Animated.View
+          style={[
+            styles.deleteAction, 
+            { 
+              transform: [{ translateX: trans }],
+              borderTopRightRadius: 18,
+              borderBottomRightRadius: 18,
+            }
+          ]}
+        >
+          <RectButton style={styles.deleteButton} onPress={handleDelete}>
+            <Ionicons name="trash-outline" size={24 * scaleFactor} color="white" />
+            <Text style={[styles.actionText, { marginLeft: 8 }]}>Eliminar</Text>
+          </RectButton>
+        </Animated.View>
+      </View>
+    );
+  };
 
   return (
     <Swipeable
@@ -80,7 +119,10 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete, onEdit }) =
       enableTrackpadTwoFingerGesture
     >
       <TouchableOpacity
-        style={[baseStyles.reminderItem, { elevation: 3 }]}
+        style={[
+          baseStyles.reminderItem, 
+          { borderLeftColor: cardStyle.borderLeftColor }
+        ]}
         activeOpacity={0.7}
         onPress={handleOptions}
       >
@@ -89,15 +131,14 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete, onEdit }) =
             style={[
               baseStyles.iconContainer,
               {
-                backgroundColor:
-                  item.type === 'medication' ? '#E8F5FF' : '#FFE8E8',
+                backgroundColor: cardStyle.iconBg,
               },
             ]}
           >
             <Ionicons
               name={item.type === 'medication' ? 'medical' : 'calendar'}
               size={24 * scaleFactor}
-              color={item.type === 'medication' ? '#4A90E2' : '#FF4B4B'}
+              color={cardStyle.iconColor}
             />
           </View>
           <View style={baseStyles.textContainer}>
@@ -136,9 +177,9 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete, onEdit }) =
           </View>
           <TouchableOpacity
             onPress={handleOptions}
-            style={{ justifyContent: 'center', height: '100%' }}
+            style={styles.optionsButton}
           >
-            <Text style={{ fontSize: 24 * scaleFactor, color: '#CCCCCC' }}>...</Text>
+            <Ionicons name="ellipsis-vertical" size={18 * scaleFactor} color="#999" />
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -149,21 +190,33 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ item, onDelete, onEdit }) =
 const styles = StyleSheet.create({
   actionContainer: {
     height: '100%',
-    width: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: 100,
+    overflow: 'hidden',
   },
   deleteAction: {
     flex: 1,
     backgroundColor: '#FF4B4B',
+    justifyContent: 'center',
+  },
+  deleteButton: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    width: 100,
   },
   actionText: {
     color: '#FFF',
-    fontWeight: '500',
+    fontWeight: '600',
     fontSize: 16,
+  },
+  optionsButton: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
   },
 });
 
